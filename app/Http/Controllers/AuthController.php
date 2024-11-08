@@ -78,7 +78,10 @@ class AuthController extends Controller
 
         // Retornamos el token generado
         Cache::forget('login_attempts_' . $request->ip());
-        return response()->json(compact('token'));
+        return response()->json([
+            'access_token' => compact('token'),
+            'token_type' => 'Bearer '
+        ]);
     }
 
 
