@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+
 
 /**
  * @OA\Info(
@@ -15,8 +17,34 @@ use Illuminate\Http\Request;
  *     )
  * )
  */
+
+ /**
+ * @OA\SecurityScheme(
+ *     securityScheme="bearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT",
+ *     in="header",
+ *     description="Token JWT necesario para acceder a la API"
+ * )
+ */
+
 class UserController extends Controller
 {
+    /**
+     * @OA\Schema(
+     *     schema="User",  // Nombre del esquema, referencia que usarás más tarde
+     *     type="object",   // Tipo de objeto (en este caso es un objeto)
+     *     required={"name", "email", "password"},  // Campos obligatorios
+     *     @OA\Property(property="id", type="integer", description="ID del usuario"),
+     *     @OA\Property(property="name", type="string", description="Nombre del usuario"),
+     *     @OA\Property(property="email", type="string", description="Correo electrónico del usuario"),
+     *     @OA\Property(property="password", type="string", description="Contraseña del usuario"),
+     *     @OA\Property(property="created_at", type="string", format="date-time", description="Fecha de creación"),
+     *     @OA\Property(property="updated_at", type="string", format="date-time", description="Fecha de actualización")
+     * )
+     */
+
     /**
      * @OA\Get(
      *     path="/api/users",
@@ -32,9 +60,19 @@ class UserController extends Controller
      *     )
      * )
      */
+
+    protected $userRepository;
+
+    public function __construct(UserRepositoryInterface $userRepository){
+
+        $this->userRepository = userRepository;
+    }
+
+
     public function index()
     {
-        return User::all();
+        $users = $this->userRepository->getAllUsers();
+        return response()->json($users);
     }
 
     /**

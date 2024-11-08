@@ -16,7 +16,7 @@ class ModuleController extends Controller
     {
 
         $actions = Action::whereHas('menu', function($query) use ($moduleId) {
-            $query->where('module_id', $moduleId)
+            $query->where('module_id', $moduleId);
         })->pluck('id');
 
         $permissions = Permission::whereIn('action_id', $actions)

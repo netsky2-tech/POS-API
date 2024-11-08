@@ -24,4 +24,14 @@ class UserTest extends TestCase
         ]);
     }
 
+    public function test_get_all_users()
+    {
+        $userRepo = \Mockery::mock(UserRepositoryInterface::class);
+        $userRepo->shouldReceive('getAllUsers')->once()->andReturn(collect(['user1', 'user2']));
+        $controller = new UserController($userRepo);
+
+        $response = $controller->index();
+        $this->assertCount(2, $response->getData());
+    }
+
 }
