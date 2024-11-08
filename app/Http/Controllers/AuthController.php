@@ -10,6 +10,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Cache;
 
 class AuthController extends Controller
 {
@@ -48,6 +49,12 @@ class AuthController extends Controller
     // Login: Generar y devolver el JWT
     public function login(Request $request)
     {
+        $attempts = Cache::get('login_attempts_' . $request->ip(), 0);
+
+        if ($attempts >= 5) {
+            return response()->json(['message' => 'Demasiados intentos. Inténtalo de nuevo en 10 minutos.'], 429);
+        }
+
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
@@ -60,9 +67,9 @@ class AuthController extends Controller
             ], 400);
         }
 
-
         try {
             if (! $token = JWTAuth::attempt($request->only('email', 'password'))) {
+                Cache::increment('login_attempts_' . $request->ip());
                 return response()->json(['error' => 'Credenciales incorrectas'], 401);
             }
         } catch (JWTException $e) {
@@ -70,6 +77,7 @@ class AuthController extends Controller
         }
 
         // Retornamos el token generado
+        Cache::forget('login_attempts_' . $request->ip());
         return response()->json(compact('token'));
     }
 
