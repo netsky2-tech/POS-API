@@ -277,13 +277,13 @@ return [
             'L5_SWAGGER_CONST_HOST' => env('L5_SWAGGER_CONST_HOST', 'http://my-default-host.com'),
         ],
     ],
-    'title' => env('SWAGGER_TITLE', 'API Documentation'),  // Título de la API
-    'description' => env('SWAGGER_DESCRIPTION', 'API for your application'),  // Descripción de la API
-    'version' => env('SWAGGER_VERSION', '1.0.0'),  // Versión de la API
-    'openapi' => '3.0.0',  // Especificación OpenAPI
+    'title' => env('SWAGGER_TITLE', 'API Documentation'),
+    'description' => env('SWAGGER_DESCRIPTION', 'API for your application'),
+    'version' => env('SWAGGER_VERSION', '1.0.0'),
+    'openapi' => '3.0.0',
     'servers' => [
         [
-            'url' => env('APP_URL', 'http://localhost'),  // URL base de la API
+            'url' => env('APP_URL', 'http://localhost'),
             'description' => 'API server',
         ],
     ],

@@ -29,21 +29,23 @@ use App\Repositories\Interfaces\UserRepositoryInterface;
  * )
  */
 
+/**
+ * @OA\Schema(
+ *     schema="User",
+ *     type="object",
+ *     required={"name", "email", "password"},
+ *     @OA\Property(property="id", type="integer", description="ID del usuario"),
+ *     @OA\Property(property="name", type="string", description="Nombre del usuario"),
+ *     @OA\Property(property="email", type="string", description="Correo electrónico del usuario"),
+ *     @OA\Property(property="password", type="string", description="Contraseña del usuario"),
+ *     @OA\Property(property="created_at", type="string", format="date-time", description="Fecha de creación"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time", description="Fecha de actualización")
+ * )
+ */
+
 class UserController extends Controller
 {
-    /**
-     * @OA\Schema(
-     *     schema="User",  // Nombre del esquema, referencia que usarás más tarde
-     *     type="object",   // Tipo de objeto (en este caso es un objeto)
-     *     required={"name", "email", "password"},  // Campos obligatorios
-     *     @OA\Property(property="id", type="integer", description="ID del usuario"),
-     *     @OA\Property(property="name", type="string", description="Nombre del usuario"),
-     *     @OA\Property(property="email", type="string", description="Correo electrónico del usuario"),
-     *     @OA\Property(property="password", type="string", description="Contraseña del usuario"),
-     *     @OA\Property(property="created_at", type="string", format="date-time", description="Fecha de creación"),
-     *     @OA\Property(property="updated_at", type="string", format="date-time", description="Fecha de actualización")
-     * )
-     */
+
 
     /**
      * @OA\Get(
