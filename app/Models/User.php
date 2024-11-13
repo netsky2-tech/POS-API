@@ -13,7 +13,7 @@ use App\Models\Company;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -46,8 +46,8 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-        /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
+    /**
+     * Get the identifier that will be stored in the JWT payload.
      *
      * @return mixed
      */
@@ -57,7 +57,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
+     * Get custom claims that will be stored in the JWT payload.
      *
      * @return array
      */

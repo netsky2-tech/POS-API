@@ -16,16 +16,16 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     public function register(Request $request)
     {
-        // Validación de los datos de registro
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
         ]);
 
         if ($validator->fails()) {
@@ -35,20 +35,17 @@ class AuthController extends Controller
             ], 400);
         }
 
-        // Crear usuario
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => bcrypt($request->password),
         ]);
 
-        // Generar el token JWT
-        $token = JWTAuth::fromUser($user);
 
         return response()->json([
-            'message' => 'Usuario creado con éxito.',
-            'token' => $token
-        ]);
+            'message' => 'Usuario creado con éxito.'
+        ], 201);
     }
 
     // Login: Generar y devolver el JWT
@@ -73,31 +70,27 @@ class AuthController extends Controller
         }
 
         $credentials = $request->only('email', 'password');
-        Log::debug('Attempting login with credentials: ', $credentials);
         try {
             if (!$token = JWTAuth::attempt($credentials)) {
-                Log::error('JWTAuth attempt failed for credentials: ', $credentials);
                 Cache::increment('login_attempts_' . $request->ip());
                 return response()->json(['error' => 'Credenciales incorrectas'], 401);
             }
         } catch (JWTException $e) {
-            Log::debug('JWTException encountered: ' . $e->getMessage());
             return response()->json(['error' => 'No se pudo crear el token'], 500);
         }
 
-        Log::debug('Token generated: ', ['token' => $token]);
         Cache::forget('login_attempts_' . $request->ip());
 
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'Bearer '
+            'token_type' => 'Bearer'
         ], 200);
     }
 
 
     public function user(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json(auth()->user());
     }
 
     // Logout: Invalidar el token

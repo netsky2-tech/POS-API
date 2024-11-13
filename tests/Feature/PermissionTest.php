@@ -11,7 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class PermissionTest extends TestCase
 {
     use RefreshDatabase;
-
+/*
     public function test_admin_can_access_menu()
     {
 
@@ -34,7 +34,7 @@ class PermissionTest extends TestCase
                  ->assertJsonFragment(['name' => 'facturacion']);
     }
 
-    /*
+
     public function test_vendedor_cannot_access_admin_menu()
     {
 

@@ -16,12 +16,14 @@ use App\Http\Controllers\AuthController;
 */
 
 #region publicRoutes
+Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
 #endregion publicRoutes
 
 
-Route::middleware(['auth.jwt'])->group(function () {
-    Route::get('/user', [AuthController::class, 'user']);
-    // Otras rutas aquí
-});
 
+Route::middleware('auth:api')->group(function () {
+
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('me', [AuthController::class, 'user']);
+});

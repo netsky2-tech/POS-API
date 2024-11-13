@@ -27,7 +27,7 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        // Crear una compañía y una sucursal asociadas al usuario
+
         $company = Company::factory()->create();
         $branch = Branch::factory()->create(['company_id' => $company->id]);
 
