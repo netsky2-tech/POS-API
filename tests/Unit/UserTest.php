@@ -6,6 +6,8 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Admon\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Http\Controllers\UserController;
+use App\Repositories\Interfaces\UserRepositoryInterface;
 
 class UserTest extends TestCase
 {
@@ -26,8 +28,11 @@ class UserTest extends TestCase
 
     public function test_get_all_users()
     {
-        $userRepo = \Mockery::mock(UserRepositoryInterface::class);
-        $userRepo->shouldReceive('getAllUsers')->once()->andReturn(collect(['user1', 'user2']));
+        $userRepo = $this->createMock(UserRepositoryInterface::class);
+        $userRepo->expects($this->once())
+                 ->method('getAllUsers')
+                 ->willReturn(collect(['user1','user2']));
+
         $controller = new UserController($userRepo);
 
         $response = $controller->index();

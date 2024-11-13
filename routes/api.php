@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,11 +16,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 #region publicRoutes
-Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
 #endregion publicRoutes
 
 
-Route::middleware(['auth:api', 'throttle:60,1'])->group(function () {
+Route::middleware(['auth.jwt'])->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
     // Otras rutas aquí
 });

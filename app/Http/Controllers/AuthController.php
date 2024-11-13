@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login']]);
+    }
+
     public function register(Request $request)
     {
         // Validación de los datos de registro
@@ -67,21 +72,26 @@ class AuthController extends Controller
             ], 400);
         }
 
+        $credentials = $request->only('email', 'password');
+        Log::debug('Attempting login with credentials: ', $credentials);
         try {
-            if (! $token = JWTAuth::attempt($request->only('email', 'password'))) {
+            if (!$token = JWTAuth::attempt($credentials)) {
+                Log::error('JWTAuth attempt failed for credentials: ', $credentials);
                 Cache::increment('login_attempts_' . $request->ip());
                 return response()->json(['error' => 'Credenciales incorrectas'], 401);
             }
         } catch (JWTException $e) {
+            Log::debug('JWTException encountered: ' . $e->getMessage());
             return response()->json(['error' => 'No se pudo crear el token'], 500);
         }
 
-        // Retornamos el token generado
+        Log::debug('Token generated: ', ['token' => $token]);
         Cache::forget('login_attempts_' . $request->ip());
+
         return response()->json([
-            'access_token' => compact('token'),
+            'access_token' => $token,
             'token_type' => 'Bearer '
-        ]);
+        ], 200);
     }
 
 

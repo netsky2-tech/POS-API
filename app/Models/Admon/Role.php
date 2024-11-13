@@ -4,6 +4,7 @@ namespace App\Models\Admon;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Role extends Model
 {
@@ -22,4 +23,9 @@ class Role extends Model
      {
          return $this->belongsToMany(User::class);
      }
+
+    public function menus()
+    {
+        return $this->belongsToMany(Menu::class);
+    }
 }

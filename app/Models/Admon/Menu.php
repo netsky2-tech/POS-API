@@ -31,4 +31,9 @@ class Menu extends Model
     {
         return $this->hasMany(Action::class);
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
 }

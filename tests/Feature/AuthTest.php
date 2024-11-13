@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 
 class AuthTest extends TestCase
 {
@@ -13,15 +14,17 @@ class AuthTest extends TestCase
     // Testing login and jwt response
     public function test_user_can_login_and_receive_jwt_token()
     {
+        $password = 'password';
         $user = User::factory()->create([
-            'email' => 'user@example.com',
-            'password' => bcrypt('password123')
+            'password' => Hash::make($password),
         ]);
 
-        $response = $this->postJson('/api/login', [
-            'email' => 'user@example.com',
-            'password' => 'password123',
-        ]);
+        $data = [
+            'email' => $user->email,
+            'password' => $password,
+        ];
+
+        $response = $this->postJson('/api/login', $data);
 
         $response->assertStatus(200)
                  ->assertJsonStructure([
