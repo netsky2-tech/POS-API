@@ -4,6 +4,21 @@ namespace App\Http\Requests\Admon;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use OpenApi\Annotations as OA;
+
+/**
+ * @OA\Schema(
+ *     schema="RoleRequest",
+ *     type="object",
+ *     title="Role Request",
+ *     required={"name"},
+ *     @OA\Property(
+ *         property="name",
+ *         type="string",
+ *         description="Nombre del rol"
+ *     )
+ * )
+ */
 
 class RoleRequest extends FormRequest
 {
