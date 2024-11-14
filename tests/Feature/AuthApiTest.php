@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class AuthTest extends TestCase
+class AuthApiTest extends TestCase
 {
     use RefreshDatabase;
 

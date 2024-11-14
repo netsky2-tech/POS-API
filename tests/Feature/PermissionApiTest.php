@@ -8,14 +8,14 @@ use App\Models\Admon\Role;
 use App\Models\Admon\Menu;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class PermissionTest extends TestCase
+class PermissionApiTest extends TestCase
 {
     use RefreshDatabase;
 /*
     public function test_admin_can_access_menu()
     {
 
-        $role = Role::factory()->create(['name' => 'admin']);
+        $role = RoleController::factory()->create(['name' => 'admin']);
         $menu = Menu::factory()->create(['name' => 'facturacion']);
 
 
@@ -38,7 +38,7 @@ class PermissionTest extends TestCase
     public function test_vendedor_cannot_access_admin_menu()
     {
 
-        $role = Role::factory()->create(['name' => 'vendedor']);
+        $role = RoleController::factory()->create(['name' => 'vendedor']);
         $menu = Menu::factory()->create(['name' => 'admin_menu']);
 
 

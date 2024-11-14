@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admon\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -30,5 +31,20 @@ Route::group([
 });
 
 #endregion AuthenticationRoutes
+
+#region Roles
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'roles'
+], function ($route){
+    Route::post('create',[RoleController::class, 'store']);
+    Route::get('show/{id}',[RoleController::class, 'show']);
+    Route::put('update/{id}',[RoleController::class, 'update']);
+    Route::delete('delete/{id}', [RoleController::class, 'destroy']);
+});
+
+#endregion Roles
+
 
 
