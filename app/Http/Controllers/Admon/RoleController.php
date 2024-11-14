@@ -57,18 +57,78 @@ class RoleController extends Controller
      *     path="/api/roles/index",
      *     summary="Obtener todos los roles",
      *     tags={"Roles"},
+     *     @OA\Parameter(
+     *          name="per_page",
+     *          in="query",
+     *          description="Número de roles por página",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="integer",
+     *              default=15
+     *          )
+     *      ),
      *     @OA\Response(
      *         response=200,
      *         description="Lista de roles",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Role")
-     *         )
+     *              type="object",
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @OA\Items(
+     *                      ref="#/components/schemas/Role"
+     *                  )
+     *              ),
+     *              @OA\Property(
+     *                  property="meta",
+     *                  type="object",
+     *                  @OA\Property(
+     *                      property="current_page",
+     *                      type="integer"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="per_page",
+     *                      type="integer"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="total",
+     *                      type="integer"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="total_pages",
+     *                      type="integer"
+     *                  )
+     *              ),
+     *              @OA\Property(
+     *                  property="links",
+     *                  type="object",
+     *                  @OA\Property(
+     *                      property="first",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="last",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="prev",
+     *                      type="string"
+     *                  ),
+     *                  @OA\Property(
+     *                      property="next",
+     *                      type="string"
+     *                  )
+     *              )
+     *          )
      *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Parámetros incorrectos"
+     *      ),
      *     security={{"bearerAuth": {}}}
      * )
      * @param Request $request
-     * @return LengthAwarePaginator
+     * @return array
      */
     public function index(Request $request): array
     {
