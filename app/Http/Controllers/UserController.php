@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use OpenApi\Annotations as OA;
 
 
 /**
@@ -63,7 +64,7 @@ class UserController extends Controller
      * )
      */
 
-    protected $userRepository;
+    protected UserRepositoryInterface $userRepository;
 
     public function __construct(UserRepositoryInterface $repository){
 
@@ -71,7 +72,7 @@ class UserController extends Controller
     }
 
 
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
         $users = $this->userRepository->getAllUsers();
         return response()->json($users);
@@ -93,7 +94,7 @@ class UserController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = User::create($request->all());
         return response()->json($user, 201);

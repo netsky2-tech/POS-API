@@ -15,15 +15,20 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-#region publicRoutes
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
-#endregion publicRoutes
+#region AuthenticationRoutes
 
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router){
 
-
-Route::middleware('auth:api')->group(function () {
-
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'user']);
+
 });
+
+#endregion AuthenticationRoutes
+
+

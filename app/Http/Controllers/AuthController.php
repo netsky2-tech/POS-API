@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Validator;
@@ -13,13 +15,12 @@ use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
-    public function register(Request $request)
+    public function register(Request $request): JsonResponse
     {
 
         $validator = Validator::make($request->all(), [
@@ -39,6 +40,8 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'company_id' => $request->company_id,
+            'branch_id' => $request->branch_id,
             'password' => bcrypt($request->password),
         ]);
 
@@ -49,7 +52,7 @@ class AuthController extends Controller
     }
 
     // Login: Generar y devolver el JWT
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $attempts = Cache::get('login_attempts_' . $request->ip(), 0);
 
@@ -71,7 +74,7 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
+            if (!$token = auth()->attempt($credentials)) {
                 Cache::increment('login_attempts_' . $request->ip());
                 return response()->json(['error' => 'Credenciales incorrectas'], 401);
             }
@@ -88,29 +91,50 @@ class AuthController extends Controller
     }
 
 
-    public function user(Request $request)
+    public function user(Request $request): JsonResponse
     {
-        return response()->json(auth()->user());
+        try{
+            return response()->json(auth()->user());
+        } catch (UserNotDefinedException $e){
+            return response()->json(['message' => 'El usuario no se encuentra autenticado'],500);
+        }
+
     }
 
     // Logout: Invalidar el token
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         try {
-            JWTAuth::invalidate(JWTAuth::getToken());
+            auth()->logout();
             return response()->json(['message' => 'Sesión cerrada correctamente']);
         } catch (JWTException $e) {
             return response()->json(['error' => 'No se pudo cerrar sesión'], 500);
         }
     }
 
-    public function refresh(Request $request)
+    public function refresh(Request $request): JsonResponse
     {
         try {
-            $token = JWTAuth::refresh(JWTAuth::getToken());
-            return response()->json(compact('token'));
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'No se pudo refrescar el token'], 500);
+            return $this->respondWithToken(auth()->refresh());
+        } catch (JWTException $e){
+            return response()->json(['error' => 'No se pudo refrescar el token de sesion.'], 500);
         }
+
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param string $token
+     *
+     * @return JsonResponse
+     */
+    protected function respondWithToken(string $token): JsonResponse
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60
+        ],200);
     }
 }

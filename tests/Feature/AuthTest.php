@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Branch;
+use App\Models\Company;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,11 +16,16 @@ class AuthTest extends TestCase
 
     public function test_user_can_register()
     {
-        $response = $this->postJson('/api/register', [
+        $company = Company::factory()->create();
+        $branch = Branch::factory()->create(['company_id' => $company->id]);
+
+        $response = $this->postJson('/api/auth/register', [
             'name' => 'Test User',
             'email' => 'testuser@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
+            'company_id' => $company->id,
+            'branch_id' => $branch->id
         ]);
 
         $response->assertStatus(201)
@@ -36,7 +43,7 @@ class AuthTest extends TestCase
         ]);
 
 
-        $response = $this->postJson('/api/login', [
+        $response = $this->postJson('/api/auth/login', [
             'email' => 'testuser@example.com',
             'password' => 'password'
         ]);
@@ -57,7 +64,7 @@ class AuthTest extends TestCase
 
         $token = JWTAuth::fromUser($user);
 
-        $response = $this->getJson('/api/me', [
+        $response = $this->getJson('/api/auth/me', [
             'Authorization' => 'Bearer ' . $token,
         ]);
 
@@ -66,6 +73,8 @@ class AuthTest extends TestCase
                      'id' => $user->id,
                      'email' => $user->email,
                      'name' => $user->name,
+                     'company_id' => $user->company_id,
+                     'branch_id' => $user->branch_id,
                  ]);
     }
 
@@ -78,7 +87,7 @@ class AuthTest extends TestCase
 
         $token = JWTAuth::fromUser($user);
 
-        $response = $this->postJson('/api/logout', [], [
+        $response = $this->postJson('/api/auth/logout', [], [
             'Authorization' => 'Bearer ' . $token,
         ]);
 
@@ -88,7 +97,7 @@ class AuthTest extends TestCase
 
     public function test_access_without_token()
     {
-        $response = $this->getJson('/api/me');
+        $response = $this->getJson('/api/auth/me');
 
         $response->assertStatus(401)
                  ->assertJson(['message' => 'Unauthenticated.']);
