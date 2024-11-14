@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\MockObject\Exception;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Admon\Role;
@@ -26,6 +27,9 @@ class UserTest extends TestCase
         ]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function test_get_all_users()
     {
         $userRepo = $this->createMock(UserRepositoryInterface::class);
