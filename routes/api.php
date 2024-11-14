@@ -38,7 +38,7 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'roles'
 ], function ($route){
-    Route::post('index',[RoleController::class, 'index']);
+    Route::get('index',[RoleController::class, 'index']);
     Route::post('create',[RoleController::class, 'store']);
     Route::get('show/{id}',[RoleController::class, 'show']);
     Route::put('update/{id}',[RoleController::class, 'update']);

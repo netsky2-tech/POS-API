@@ -4,6 +4,7 @@ namespace App\Services\Admon;
 use App\Models\Admon\Role;
 use App\Repositories\Interfaces\Admon\RoleRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class RoleService
 {
@@ -14,9 +15,9 @@ class RoleService
         $this->roleRepository = $roleRepository;
     }
 
-    public function getAllRoles(): Collection
+    public function getAllPaginated($perPage = 15): LengthAwarePaginator
     {
-        return $this->roleRepository->getAllRoles();
+        return $this->roleRepository->getAllPaginated();
     }
 
     public function getRoleById(int $id): ?Role

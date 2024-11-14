@@ -93,4 +93,18 @@ class RoleApiTest extends TestCase
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name']);
     }
+
+    public function test_roles_pagination()
+    {
+        $response = $this->getJson( '/api/roles/index', ['per_page' => 10]);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => ['id', 'name', 'created_at', 'updated_at']
+                ],
+                'meta' => ['current_page', 'total', 'per_page', 'total_pages'],
+                'links' => ['first', 'last', 'prev', 'next']
+            ]);
+    }
 }

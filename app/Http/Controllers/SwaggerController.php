@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use OpenApi\Annotations as OA;
 
 /**
  * @OA\Info(
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
  *      title="API Documentation",
  *      description="Documentación de la API generada automáticamente con Swagger",
  *      @OA\Contact(
- *          email="tucorreo@example.com"
+ *          email="person@example.com"
  *      ),
  *      @OA\License(
  *          name="Apache 2.0",

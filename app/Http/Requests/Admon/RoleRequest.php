@@ -40,6 +40,14 @@ class RoleRequest extends FormRequest
         $rules = [];
 
         switch ($this->method()) {
+
+            case 'GET':
+                $rules = [
+                    'page' => 'nullable|integer|min:1',
+                    'per_page' => 'nullable|integer|min:1|max:100',
+                ];
+                break;
+
             case 'POST':
                 $rules = [
                     'name' => 'required|string|max:255|unique:roles,name',
@@ -63,5 +71,12 @@ class RoleRequest extends FormRequest
         }
 
         return $rules;
+    }
+
+    public function messages(): array
+    {
+        return [
+            'per_page.max' => 'El número máximo de elementos por página es 100.',
+        ];
     }
 }

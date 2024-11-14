@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Repositories\Interfaces\Admon\RoleRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class RoleRepository implements RoleRepositoryInterface
 {
@@ -17,9 +18,9 @@ class RoleRepository implements RoleRepositoryInterface
         $this->model = $role;
     }
 
-    public function getAllRoles(): Collection
+    public function getAllPaginated($perPage = 15): LengthAwarePaginator
     {
-        return $this->model->all();
+        return $this->model->paginate($perPage);
     }
 
     public function findRoleById($id): ?Role
