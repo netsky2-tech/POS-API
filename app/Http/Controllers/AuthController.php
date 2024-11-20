@@ -76,7 +76,7 @@ class AuthController extends Controller
         try {
             if (!$token = auth()->attempt($credentials)) {
                 Cache::increment('login_attempts_' . $request->ip());
-                return response()->json(['error' => 'Credenciales incorrectas'], 401);
+                return response()->json(['error' => 'Credenciales incorrectas'], 400);
             }
         } catch (JWTException $e) {
             return response()->json(['error' => 'No se pudo crear el token'], 500);
@@ -93,12 +93,11 @@ class AuthController extends Controller
 
     public function user(Request $request): JsonResponse
     {
-        try{
+        try {
             return response()->json(auth()->user());
-        } catch (UserNotDefinedException $e){
-            return response()->json(['message' => 'El usuario no se encuentra autenticado'],500);
+        } catch (UserNotDefinedException $e) {
+            return response()->json(['message' => 'El usuario no se encuentra autenticado'], 500);
         }
-
     }
 
     // Logout: Invalidar el token
@@ -116,10 +115,9 @@ class AuthController extends Controller
     {
         try {
             return $this->respondWithToken(auth()->refresh());
-        } catch (JWTException $e){
+        } catch (JWTException $e) {
             return response()->json(['error' => 'No se pudo refrescar el token de sesion.'], 500);
         }
-
     }
 
     /**
@@ -135,6 +133,6 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
-        ],200);
+        ], 200);
     }
 }
