@@ -12,27 +12,27 @@ class Menu extends Model
     /**
      * Relationships
      */
-    public function module()
+    public function module(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Module::class);
     }
 
-    public function parent()
+    public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Menu::class, 'parent_id');
     }
 
-    public function submenus()
+    public function submenus(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Menu::class, 'parent_id');
     }
 
-    public function actions()
+    public function actions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Action::class);
     }
 
-    public function roles()
+    public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }

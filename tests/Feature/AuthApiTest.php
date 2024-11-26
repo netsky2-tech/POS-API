@@ -4,24 +4,70 @@ namespace Tests\Feature;
 
 use App\Models\Branch;
 use App\Models\Company;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tests\Helpers\HandlesAuthCookies;
 
 class AuthApiTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, HandlesAuthCookies;
 
-    public function test_user_can_register()
+    /**
+     * Test de inicio de sesión de usuario.
+     *
+     * @return void
+     */
+    public function testLogin()
+    {
+        // Crear un usuario para hacer login
+        $user = User::factory()->create([
+            'password' => 'password123'
+        ]);
+
+        $response = $this->postJson('/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'password123',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'token',
+            ]);
+    }
+
+    /**
+     * Test de inicio de sesión con credenciales incorrectas.
+     *
+     * @return void
+     */
+    public function testLoginWithInvalidCredentials()
+    {
+        $response = $this->postJson('/api/auth/login', [
+            'email' => 'invalid@example.com',
+            'password' => 'wrongpassword',
+        ]);
+
+        $response->assertStatus(401)
+            ->assertJson([
+                'error' => 'Credenciales incorrectas',
+            ]);
+    }
+
+    public function testRegister()
     {
         $company = Company::factory()->create();
         $branch = Branch::factory()->create(['company_id' => $company->id]);
 
         $response = $this->postJson('/api/auth/register', [
-            'name' => 'Test User',
-            'email' => 'testuser@example.com',
+            'name' => 'Juan Pérez',
+            'email' => 'juan@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'company_id' => $company->id,
@@ -29,77 +75,83 @@ class AuthApiTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                 ->assertJson([
-                    'message' => 'Usuario creado con éxito.',
-                ]);
+            ->assertJson([
+                'message' => 'Usuario creado con éxito.',
+            ]);
     }
 
-    /** @test */
-    public function test_user_can_login_and_receive_jwt_token()
-    {
-        $user = User::factory()->create([
-            'email' => 'testuser@example.com',
-            'password' => bcrypt('password')
-        ]);
-
-
-        $response = $this->postJson('/api/auth/login', [
-            'email' => 'testuser@example.com',
-            'password' => 'password'
-        ]);
-
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                    'access_token',
-                    'token_type'
-                ]);
-    }
-
-    public function test_authenticated_user_can_access_me()
+    /**
+     * Test para obtener los datos del usuario autenticado.
+     *
+     * @return void
+     */
+    public function testGetUser()
     {
 
-        $user = User::factory()->create([
-            'password' => bcrypt('password123')
-        ]);
+        $user = User::factory()->create();
 
-        $token = JWTAuth::fromUser($user);
+        $token = auth()->login($user);
 
-        $response = $this->getJson('/api/auth/me', [
-            'Authorization' => 'Bearer ' . $token,
-        ]);
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson('/api/auth/user');
 
         $response->assertStatus(200)
-                 ->assertJson([
-                     'id' => $user->id,
-                     'email' => $user->email,
-                     'name' => $user->name,
-                     'company_id' => $user->company_id,
-                     'branch_id' => $user->branch_id,
-                 ]);
+            ->assertJson([
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ]);
     }
-
-    public function test_user_can_logout()
-    {
-        $user = User::factory()->create([
-            'password' => bcrypt('password123')
-        ]);
-
-
-        $token = JWTAuth::fromUser($user);
-
-        $response = $this->postJson('/api/auth/logout', [], [
-            'Authorization' => 'Bearer ' . $token,
-        ]);
-
-        $response->assertStatus(200)
-                 ->assertJson(['message' => 'Sesión cerrada correctamente']);
-    }
-
     public function test_access_without_token()
     {
-        $response = $this->getJson('/api/auth/me');
+        $response = $this->getJson('/api/auth/user');
 
         $response->assertStatus(401)
-                 ->assertJson(['message' => 'Unauthenticated.']);
+                 ->assertJson(["message" => "Unauthenticated."]);
+    }
+    /**
+     * Test de cerrar sesión de usuario.
+     *
+     * @return void
+     */
+    public function testLogout()
+    {
+        // Crear un usuario para autenticarse
+        $user = User::factory()->create();
+
+        // Obtener un token para autenticar al usuario
+        $token = auth()->login($user);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->postJson('/api/auth/logout');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Sesión cerrada correctamente',
+            ]);
+    }
+
+    /**
+     * Test de refresco de token JWT.
+     *
+     * @return void
+     */
+    public function testRefresh()
+    {
+        // Crear un usuario para autenticarse
+        $user = User::factory()->create([
+            'password' => 'password123'
+        ]);
+
+        // Obtener un token para autenticar al usuario
+        $token = auth()->login($user);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->postJson('/api/auth/refresh');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Token renovado',
+            ]);
     }
 }
