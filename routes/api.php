@@ -21,13 +21,12 @@ use App\Http\Controllers\AuthController;
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
-], function ($router){
+], function ($router) {
 
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'user']);
-
 });
 
 #endregion AuthenticationRoutes
@@ -37,15 +36,12 @@ Route::group([
 Route::group([
     'middleware' => 'api',
     'prefix' => 'roles'
-], function ($route){
-    Route::get('index',[RoleController::class, 'index']);
-    Route::post('create',[RoleController::class, 'store']);
-    Route::get('show/{id}',[RoleController::class, 'show']);
-    Route::put('update/{id}',[RoleController::class, 'update']);
+], function ($route) {
+    Route::get('index', [RoleController::class, 'index']);
+    Route::post('create', [RoleController::class, 'store']);
+    Route::get('show/{id}', [RoleController::class, 'show']);
+    Route::put('update/{id}', [RoleController::class, 'update']);
     Route::delete('delete/{id}', [RoleController::class, 'destroy']);
 });
 
 #endregion Roles
-
-
-
