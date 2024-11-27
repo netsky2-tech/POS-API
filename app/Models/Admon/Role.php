@@ -18,17 +18,17 @@ class Role extends Model
      * Relationships
      */
 
-     public function permissions()
+     public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
      {
          return $this->belongsToMany(Permission::class);
      }
 
-     public function users()
+     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
      {
          return $this->belongsToMany(User::class);
      }
 
-    public function menus()
+    public function menus(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Menu::class);
     }
