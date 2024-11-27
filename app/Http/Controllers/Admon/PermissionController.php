@@ -3,16 +3,52 @@
 namespace App\Http\Controllers\Admon;
 
 use App\Http\Controllers\Controller;
+use App\Models\Admon\Action;
+use App\Models\Admon\Menu;
+use App\Models\Admon\Module;
+use App\Models\Admon\Permission;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
+
+    public function hasModulePermission($roleId, $moduleId)
+    {
+        // Obtener las acciones dentro del módulo
+        $actions = Action::whereHas('menu', function($query) use ($moduleId) {
+            $query->where('module_id', $moduleId);
+        })->pluck('id');
+
+        // Verificar si el rol tiene permisos sobre esas acciones
+        return Permission::whereIn('action_id', $actions)
+            ->where('role_id', $roleId)
+            ->exists();
+    }
+
+    public function hasMenuPermission($roleId, $menuId)
+    {
+        // Verificar si el rol tiene permisos sobre las acciones de ese menú
+        $actions = Action::where('menu_id', $menuId)->pluck('id');
+
+        return Permission::whereIn('action_id', $actions)
+            ->where('role_id', $roleId)
+            ->exists();
+    }
+
+    public function hasActionPermission($roleId, $actionId)
+    {
+        // Verificar si el rol tiene el permiso sobre esa acción
+        return Permission::where('action_id', $actionId)
+            ->where('role_id', $roleId)
+            ->exists();
+    }
+
     /**
      * modulePermission: permisos de cada action, menu y module que tiene el usuario
      * @author octaviom
      */
 
-    public function getModulePermissions($roleId)
+    public function getModulePermissions($roleId): \Illuminate\Http\JsonResponse
     {
          // Obtener todos los módulos
          $modules = Module::all();

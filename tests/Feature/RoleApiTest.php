@@ -3,10 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\Admon\Role;
+use App\Models\User;
 use App\Services\Admon\RoleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RoleApiTest extends TestCase
 {
@@ -22,7 +25,15 @@ class RoleApiTest extends TestCase
 
     public function test_can_create_role()
     {
-        $response = $this->postJson('/api/roles/create', [
+
+        $user = User::factory()->create();
+
+        $token = JWTAuth::fromUser($user);
+
+        $cookie = cookie('auth_token',$token);
+
+        $response = $this->withCookie('auth_token',$cookie)
+            ->postJson('/api/roles/create', [
             'name' => 'Admin',
         ]);
 
@@ -96,7 +107,7 @@ class RoleApiTest extends TestCase
 
     public function test_roles_pagination()
     {
-        $response = $this->getJson( '/api/roles/index', ['per_page' => 10]);
+        $response = $this->getJson('/api/roles/index', ['per_page' => 10]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([

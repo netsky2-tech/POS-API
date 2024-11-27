@@ -138,7 +138,7 @@ return [
     |
     | The session cookie path determines the path for which the cookie will
     | be regarded as available. Typically, this will be the root path of
-    | your application but you are free to change this when necessary.
+    | your application, but you are free to change this when necessary.
     |
     */
 
@@ -168,7 +168,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -196,7 +196,7 @@ return [
     |
     */
 
-    'same_site' => 'lax',
+    'same_site' => env('SESSION_SAME_SITE', 'lax'),
 
     /*
     |--------------------------------------------------------------------------

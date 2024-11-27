@@ -16,17 +16,23 @@ use App\Http\Controllers\AuthController;
 |
 */
 
+# publicRoutes
+Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttle:login');
+Route::post('auth/register', [AuthController::class, 'register']);
+# end publicRoutes
+
 #region AuthenticationRoutes
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => 'auth:api',
     'prefix' => 'auth'
 ], function ($router) {
 
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:login');
     Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('me', [AuthController::class, 'user']);
+    Route::get('user', [AuthController::class, 'user']);
+    Route::get('refresh', [AuthController::class, 'refresh']);
 });
 
 #endregion AuthenticationRoutes
@@ -34,7 +40,7 @@ Route::group([
 #region Roles
 
 Route::group([
-    'middleware' => 'api',
+    'middleware' => 'auth:api',
     'prefix' => 'roles'
 ], function ($route) {
     Route::get('index', [RoleController::class, 'index']);
