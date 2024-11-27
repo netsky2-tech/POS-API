@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admon\PermissionController;
 use App\Http\Controllers\Admon\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,7 @@ use App\Http\Controllers\AuthController;
 # publicRoutes
 Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttle:login');
 Route::post('auth/register', [AuthController::class, 'register']);
+Route::get('permission/{roleId}', [PermissionController::class, 'getModulePermissions'])->middleware('auth:api');
 # end publicRoutes
 
 #region AuthenticationRoutes

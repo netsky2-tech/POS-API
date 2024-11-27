@@ -3,99 +3,138 @@
 namespace App\Http\Controllers\Admon;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admon\Action;
-use App\Models\Admon\Menu;
-use App\Models\Admon\Module;
-use App\Models\Admon\Permission;
-use Illuminate\Http\Request;
+use App\Repositories\Interfaces\Admon\ActionRepositoryInterface;
+use App\Repositories\Interfaces\Admon\MenuRepositoryInterface;
+use App\Repositories\Interfaces\Admon\ModuleRepositoryInterface;
+use App\Repositories\Interfaces\Admon\PermissionRepositoryInterface;
+use Illuminate\Http\JsonResponse;
 
 class PermissionController extends Controller
 {
 
-    public function hasModulePermission($roleId, $moduleId)
+    protected ModuleRepositoryInterface $moduleRepository;
+    protected MenuRepositoryInterface $menuRepository;
+    protected ActionRepositoryInterface $actionRepository;
+    protected PermissionRepositoryInterface $permissionRepository;
+
+    public function __construct(
+        ModuleRepositoryInterface     $moduleRepository,
+        MenuRepositoryInterface       $menuRepository,
+        ActionRepositoryInterface     $actionRepository,
+        PermissionRepositoryInterface $permissionRepository
+    )
     {
-        // Obtener las acciones dentro del módulo
-        $actions = Action::whereHas('menu', function($query) use ($moduleId) {
-            $query->where('module_id', $moduleId);
-        })->pluck('id');
-
-        // Verificar si el rol tiene permisos sobre esas acciones
-        return Permission::whereIn('action_id', $actions)
-            ->where('role_id', $roleId)
-            ->exists();
-    }
-
-    public function hasMenuPermission($roleId, $menuId)
-    {
-        // Verificar si el rol tiene permisos sobre las acciones de ese menú
-        $actions = Action::where('menu_id', $menuId)->pluck('id');
-
-        return Permission::whereIn('action_id', $actions)
-            ->where('role_id', $roleId)
-            ->exists();
-    }
-
-    public function hasActionPermission($roleId, $actionId)
-    {
-        // Verificar si el rol tiene el permiso sobre esa acción
-        return Permission::where('action_id', $actionId)
-            ->where('role_id', $roleId)
-            ->exists();
+        $this->moduleRepository = $moduleRepository;
+        $this->menuRepository = $menuRepository;
+        $this->actionRepository = $actionRepository;
+        $this->permissionRepository = $permissionRepository;
     }
 
     /**
-     * modulePermission: permisos de cada action, menu y module que tiene el usuario
-     * @author octaviom
+     * @OA\Get(
+     *     path="/api/permissions/{roleId}",
+     *     summary="Obtiene los permisos por módulo",
+     *     description="Devuelve los módulos, menús y acciones a los que un rol tiene acceso.",
+     *     tags={"Permissions"},
+     *     @OA\Parameter(
+     *         name="roleId",
+     *         in="path",
+     *         description="ID del rol para consultar permisos",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Listado de permisos por módulo",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="module",
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Ventas"),
+     *                     @OA\Property(
+     *                         property="menus",
+     *                         type="array",
+     *                         @OA\Items(
+     *                             type="object",
+     *                             @OA\Property(property="id", type="integer", example=1),
+     *                             @OA\Property(property="name", type="string", example="Facturación"),
+     *                             @OA\Property(
+     *                                 property="actions",
+     *                                 type="array",
+     *                                 @OA\Items(
+     *                                     type="object",
+     *                                     @OA\Property(property="id", type="integer", example=1),
+     *                                     @OA\Property(property="name", type="string", example="Registrar")
+     *                                 )
+     *                             )
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Rol no encontrado",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Rol no encontrado")
+     *         )
+     *     )
+     * )
      */
 
-    public function getModulePermissions($roleId): \Illuminate\Http\JsonResponse
+    public function getModulePermissions($roleId): JsonResponse
     {
-         // Obtener todos los módulos
-         $modules = Module::all();
+        // Obtener todos los módulos
+        $modules = $this->moduleRepository->getAll();
+        $modulePermissions = [];
 
-         $modulePermissions = [];
+        foreach ($modules as $module) {
+            $moduleData = [
+                'id' => $module->id,
+                'name' => $module->name,
+                'menus' => []
+            ];
 
-         foreach ($modules as $module) {
-             // Verifica si el rol tiene permiso para el módulo
-             if ($this->hasModulePermission($roleId, $module->id)) {
-                 // Obtiene los menús del módulo
-                 $menus = Menu::where('module_id', $module->id)->get();
-                 $menuPermissions = [];
+            // Obtener los menús relacionados al módulo
+            $menus = $this->menuRepository->getByModuleId($module->id);
 
-                 foreach ($menus as $menu) {
-                     // Verifica si el rol tiene permiso para el menú
-                     if ($this->hasMenuPermission($roleId, $menu->id)) {
-                         // Obtiene las acciones del menú
-                         $actions = Action::where('menu_id', $menu->id)->get();
-                         $actionPermissions = [];
+            foreach ($menus as $menu) {
+                // Verificar si el rol tiene permisos para las acciones del menú
+                $actions = $this->actionRepository->getByMenuId($menu->id);
+                $allowedActions = [];
 
-                         foreach ($actions as $action) {
-                             // Verifica si el rol tiene permiso para la acción
-                             if ($this->hasActionPermission($roleId, $action->id)) {
-                                 $actionPermissions[] = $action;
-                             }
-                         }
+                foreach ($actions as $action) {
+                    // Verificar si el rol tiene permiso para la acción
+                    if ($this->permissionRepository->existsForRoleAndAction($roleId, $action->id)) {
+                        $allowedActions[] = [
+                            'id' => $action->id,
+                            'name' => $action->name,
+                        ];
+                    }
+                }
 
-                         // Si el rol tiene permisos sobre este menú y tiene acciones permitidas
-                         if (count($actionPermissions) > 0) {
-                             $menuPermissions[] = [
-                                 'menu' => $menu,
-                                 'actions' => $actionPermissions,
-                             ];
-                         }
-                     }
-                 }
+                // Si hay acciones permitidas, incluir el menú
+                if (!empty($allowedActions)) {
+                    $moduleData['menus'][] = [
+                        'id' => $menu->id,
+                        'name' => $menu->name,
+                        'actions' => $allowedActions,
+                    ];
+                }
+            }
 
-                 // Si el rol tiene permisos sobre menús, agregar el módulo
-                 if (count($menuPermissions) > 0) {
-                     $modulePermissions[] = [
-                         'module' => $module,
-                         'menus' => $menuPermissions,
-                     ];
-                 }
-             }
-         }
+            // Si el módulo tiene menús permitidos, agregarlo al resultado
+            if (!empty($moduleData['menus'])) {
+                $modulePermissions[] = ['module' => $moduleData];
+            }
+        }
 
-         return response()->json($modulePermissions);
+        return response()->json($modulePermissions);
     }
 }
