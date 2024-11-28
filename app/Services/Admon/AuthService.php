@@ -57,6 +57,7 @@ class AuthService
     {
         $user = auth()->user();
         if ($user) {
+            /**@var User | null $user */
             return $user->load('roles');
         }
     }
