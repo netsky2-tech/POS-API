@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Admon;
 
 use App\Models\User;
@@ -54,6 +55,9 @@ class AuthService
 
     public function getUser(): ?\Illuminate\Contracts\Auth\Authenticatable
     {
-        return auth()->user();
+        $user = auth()->user();
+        if ($user) {
+            return $user->load('roles');
+        }
     }
 }
