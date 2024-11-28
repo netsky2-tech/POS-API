@@ -18,6 +18,8 @@ class RoleFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
+            'created_by' => $this->faker->name,
+            'modified_by' => $this->faker->name,
         ];
     }
 }
