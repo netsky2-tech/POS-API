@@ -55,10 +55,9 @@ class AuthService
 
     public function getUser(): ?\Illuminate\Contracts\Auth\Authenticatable
     {
+        /** @var User|null $user */
         $user = auth()->user();
-        if ($user) {
-            /**@var User | null $user */
-            return $user->load('roles');
-        }
+        $user?->load(['roles']);
+        return auth()->user();
     }
 }
