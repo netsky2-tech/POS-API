@@ -24,12 +24,12 @@ Route::post('auth/register', [AuthController::class, 'register']);
 #region AuthenticationRoutes
 
 Route::group([
-    'middleware' => 'auth:api',
+    'middleware' => 'jwt.auth',
     'prefix' => 'auth'
 ], function ($router){
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('user', [AuthController::class, 'user']);
-    Route::get('refresh', [AuthController::class, 'refresh']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
 
 });
 
@@ -38,7 +38,7 @@ Route::group([
 #region Roles
 
 Route::group([
-    'middleware' => 'auth:api',
+    'middleware' => 'jwt.auth',
     'prefix' => 'roles'
 ], function ($route){
     Route::get('index',[RoleController::class, 'index']);

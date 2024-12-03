@@ -15,7 +15,7 @@ class RoleApiTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected $roleService;
+    protected mixed $roleService;
 
     public function setUp(): void
     {
@@ -26,13 +26,13 @@ class RoleApiTest extends TestCase
     public function test_can_create_role()
     {
 
+        // Crear un usuario para autenticarse
         $user = User::factory()->create();
 
-        $token = JWTAuth::fromUser($user);
+        // Obtener un token para autenticar al usuario
+        $token = auth()->login($user);
 
-        $cookie = cookie('auth_token',$token);
-
-        $response = $this->withCookie('auth_token',$cookie)
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
             ->postJson('/api/roles/create', [
             'name' => 'Admin',
         ]);
@@ -54,9 +54,16 @@ class RoleApiTest extends TestCase
 
     public function test_can_get_role_by_id()
     {
+        // Crear un usuario para autenticarse
+        $user = User::factory()->create();
+
+        // Obtener un token para autenticar al usuario
+        $token = auth()->login($user);
+
         $role = Role::factory()->create();
 
-        $response = $this->getJson("/api/roles/show/{$role->id}");
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson("/api/roles/show/{$role->id}");
 
         $response->assertStatus(200)
             ->assertJson([
@@ -69,9 +76,16 @@ class RoleApiTest extends TestCase
 
     public function test_can_delete_role()
     {
+        // Crear un usuario para autenticarse
+        $user = User::factory()->create();
+
+        // Obtener un token para autenticar al usuario
+        $token = auth()->login($user);
+
         $role = Role::factory()->create();
 
-        $response = $this->deleteJson("/api/roles/delete/{$role->id}");
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->deleteJson("/api/roles/delete/{$role->id}");
 
         $response->assertStatus(200)
             ->assertJson([
@@ -85,7 +99,14 @@ class RoleApiTest extends TestCase
 
     public function test_create_role_validation_fails()
     {
-        $response = $this->postJson('/api/roles/create', [
+        // Crear un usuario para autenticarse
+        $user = User::factory()->create();
+
+        // Obtener un token para autenticar al usuario
+        $token = auth()->login($user);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->postJson('/api/roles/create', [
 
         ]);
 
@@ -95,9 +116,16 @@ class RoleApiTest extends TestCase
 
     public function test_update_role_validation_fails()
     {
+        // Crear un usuario para autenticarse
+        $user = User::factory()->create();
+
+        // Obtener un token para autenticar al usuario
+        $token = auth()->login($user);
+
         $role = Role::factory()->create();
 
-        $response = $this->putJson("/api/roles/update/{$role->id}", [
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->putJson("/api/roles/update/{$role->id}", [
             'name' => '',
         ]);
 
@@ -107,7 +135,14 @@ class RoleApiTest extends TestCase
 
     public function test_roles_pagination()
     {
-        $response = $this->getJson('/api/roles/index', ['per_page' => 10]);
+        // Crear un usuario para autenticarse
+        $user = User::factory()->create();
+
+        // Obtener un token para autenticar al usuario
+        $token = auth()->login($user);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson('/api/roles/index', ['per_page' => 10]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([

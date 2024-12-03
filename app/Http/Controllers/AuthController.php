@@ -36,7 +36,6 @@ class AuthController extends Controller
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -245,7 +244,7 @@ class AuthController extends Controller
      * )
      */
 
-    public function logout(Request $request): JsonResponse
+    public function logout(): JsonResponse
     {
         try {
             $this->authService->logout();
@@ -290,14 +289,12 @@ class AuthController extends Controller
     public function refresh(Request $request): JsonResponse
     {
         try {
-            $refreshToken = $request->cookie('refresh_token');
-            if (!$refreshToken) {
-                return response()->json(['error' => 'Refresh token no proporcionado'], 401);
-            }
 
-            $newAccessToken = $this->authService->refreshToken($refreshToken);
-            return response()->json(['message' => 'Token renovado'])
-                ->cookie('access_token', $newAccessToken, 15, '/', null, true, true, 'Lax');
+            $refresh_token = $this->authService->refreshToken();
+            return response()->json([
+                'message' => 'Refresh token generado',
+                'token' => $refresh_token
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'No se pudo renovar el token'], 500);
         }
