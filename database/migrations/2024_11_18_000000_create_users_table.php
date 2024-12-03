@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('branch_id');
-            $table->string('name');
+            $table->string('name')->unique();
+            $table->string('full_name')->unique();
             $table->string('email')->unique();
+            $table->text('picture')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
