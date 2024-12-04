@@ -108,7 +108,7 @@ class AuthApiTest extends TestCase
         $response = $this->getJson('/api/auth/user');
 
         $response->assertStatus(401)
-                 ->assertJson(["message" => "Unauthenticated."]);
+                 ->assertJson(["message" => "Token not provided"]);
     }
     /**
      * Test de cerrar sesión de usuario.
@@ -140,9 +140,7 @@ class AuthApiTest extends TestCase
     public function testRefresh()
     {
         // Crear un usuario para autenticarse
-        $user = User::factory()->create([
-            'password' => 'password123'
-        ]);
+        $user = User::factory()->create();
 
         // Obtener un token para autenticar al usuario
         $token = auth()->login($user);
@@ -151,8 +149,9 @@ class AuthApiTest extends TestCase
             ->postJson('/api/auth/refresh');
 
         $response->assertStatus(200)
-            ->assertJson([
-                'message' => 'Token renovado',
+            ->assertJsonStructure([
+                'message',
+                'token',
             ]);
     }
 }

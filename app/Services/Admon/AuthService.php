@@ -43,14 +43,15 @@ class AuthService
         return $token;
     }
 
-    public function refreshToken($refreshToken)
+    public function refreshToken()
     {
-        return JWTAuth::refresh($refreshToken);
+        return JWTAuth::refresh();
     }
 
     public function logout(): void
     {
         JWTAuth::invalidate(JWTAuth::getToken());
+
     }
 
     public function getUser(): ?\Illuminate\Contracts\Auth\Authenticatable
