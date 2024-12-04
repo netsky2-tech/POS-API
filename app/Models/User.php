@@ -21,6 +21,7 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email',
+        'full_name',
         'password',
         'company_id',
         'branch_id'
@@ -76,6 +77,6 @@ class User extends Authenticatable implements JWTSubject
 
     public function roles(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class)->with('permissions', 'menus');
     }
 }

@@ -13,7 +13,7 @@ class Permission extends Model
      * Relationships
      */
 
-    public function action()
+    public function actions()
     {
         return $this->belongsTo(Action::class);
     }

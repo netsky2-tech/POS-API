@@ -18,18 +18,18 @@ class Role extends Model
      * Relationships
      */
 
-     public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     {
-         return $this->belongsToMany(Permission::class);
-     }
+    public function permissions(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class)->with('actions');
+    }
 
-     public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     {
-         return $this->belongsToMany(User::class);
-     }
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
 
     public function menus(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(Menu::class);
+        return $this->belongsToMany(Menu::class)->with('actions');
     }
 }
