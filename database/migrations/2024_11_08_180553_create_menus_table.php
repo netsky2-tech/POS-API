@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('path')->nullable()->comment('URL del menu');
             $table->foreignId('module_id')->constrained('modules');
             $table->foreignId('parent_id')->nullable()->constrained('menus');
             $table->timestamps();
