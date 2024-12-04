@@ -10,7 +10,7 @@ use App\Models\Company;
 use App\Models\Branch;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -40,6 +40,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'company_id' => $company->id,
             'branch_id' => $branch->id,
+            'created_by' => $this->faker->name,
         ];
     }
 

@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('ruc')->nullable();
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
+            $table->string('created_by');
+            $table->string('modified_by')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('companies');
     }
 };

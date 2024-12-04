@@ -2,10 +2,12 @@
 
 namespace Database\Factories\Admon;
 
+use App\Models\Admon\Role;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Admon\Role>
+ * @extends Factory<Role>
  */
 class RoleFactory extends Factory
 {

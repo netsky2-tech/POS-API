@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('role_id')->constrained('roles');
             $table->foreignId('action_id')->constrained('actions');
+            $table->string('created_by');
+            $table->string('modified_by')->nullable();
             $table->timestamps();
         });
     }
