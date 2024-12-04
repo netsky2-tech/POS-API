@@ -53,6 +53,7 @@ class AuthController extends Controller
      *                 type="object",
      *                 required={"name", "email", "password"},
      *                 @OA\Property(property="name", type="string", description="Nombre del usuario"),
+     *                 @OA\Property(property="full_name", type="string", description="Nombre completo"),
      *                 @OA\Property(property="email", type="string", format="email", description="Correo electrónico del usuario"),
      *                 @OA\Property(property="password", type="string", description="Contraseña del usuario"),
      *                 @OA\Property(property="company_id", type="integer", description="ID de la empresa"),
@@ -82,6 +83,7 @@ class AuthController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
+            'full_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
         ]);
