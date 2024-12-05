@@ -31,7 +31,7 @@ trait HandlesAuthCookies
     /**
      * Agrega las cookies necesarias a la siguiente solicitud.
      */
-    public function withAuthCookies(array $cookies): \Tests\Feature\AuthApiTest
+    public function withAuthCookies(array $cookies): \Controllers\V1\AuthApiTest
     {
         foreach ($cookies as $cookie) {
             $this->withCookie($cookie->getName(), $cookie->getValue());

@@ -1,17 +1,13 @@
 <?php
 
-namespace Tests\Feature;
+namespace Controllers\V1;
 
 use App\Models\Branch;
 use App\Models\Company;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Log;
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Tests\Helpers\HandlesAuthCookies;
+use Tests\TestCase;
 
 class AuthApiTest extends TestCase
 {

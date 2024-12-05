@@ -1,15 +1,12 @@
 <?php
 
-namespace Tests\Feature;
+namespace Controllers\V1;
 
 use App\Models\Admon\Role;
 use App\Models\User;
 use App\Services\Admon\RoleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RoleApiTest extends TestCase
 {

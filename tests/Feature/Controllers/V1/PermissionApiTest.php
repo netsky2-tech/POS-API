@@ -1,12 +1,9 @@
 <?php
 
-namespace Tests\Feature;
+namespace Controllers\V1;
 
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\Admon\Role;
-use App\Models\Admon\Menu;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class PermissionApiTest extends TestCase
 {
