@@ -16,6 +16,12 @@ class MunicipalityController extends Controller
         $this->municipalityService = $municipalityService;
     }
 
+    public function index()
+    {
+        $municipalities = $this->municipalityService->index();
+        return MunicipalityResource::collection($municipalities);
+    }
+
     public function store(MunicipalityRequest $request)
     {
         $validated = $request->validated();

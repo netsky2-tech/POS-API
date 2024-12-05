@@ -13,6 +13,10 @@ class MunicipalityService
         $this->municipalityRepository = $municipalityRepository;
     }
 
+    public function index($departmentId, $perPage = 15): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return $this->municipalityRepository->getAllByDepartment($departmentId, $perPage);
+    }
     public function create(array $data)
     {
         return $this->municipalityRepository->createMunicipality($data);

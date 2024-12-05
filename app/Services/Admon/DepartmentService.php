@@ -6,11 +6,16 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DepartmentService
 {
-    protected $departmentRepository;
+    protected DepartmentRepositoryInterface $departmentRepository;
 
     public function __construct(DepartmentRepositoryInterface $departmentRepository)
     {
         $this->departmentRepository = $departmentRepository;
+    }
+
+    public function index($perPage = 15): \Illuminate\Pagination\LengthAwarePaginator
+    {
+        return $this->departmentRepository->getAllPaginated($perPage);
     }
 
     public function create(array $data)

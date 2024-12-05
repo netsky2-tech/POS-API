@@ -16,6 +16,12 @@ class DepartmentController extends Controller
         $this->departmentService = $departmentService;
     }
 
+    public function index()
+    {
+        $departments = $this->departmentService->index();
+        return DepartmentResource::collection($departments);
+    }
+
     public function store(DepartmentRequest $request)
     {
         $validated = $request->validated();
