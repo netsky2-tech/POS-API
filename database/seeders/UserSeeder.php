@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
             [
                 'company_id' => 1,
                 'branch_id' => 1,
+                'role_id' => 1,
                 'name' => 'Administrator',
                 'full_name' => 'Administrador sistema',
                 'email' => 'administrator@example.com',
