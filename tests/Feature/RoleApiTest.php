@@ -33,7 +33,7 @@ class RoleApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/roles/create', [
+            ->postJson('/api/v1/roles/create', [
                 'name' => 'Admin',
                 'created_by' => $user->name,
         ]);
@@ -63,7 +63,7 @@ class RoleApiTest extends TestCase
         $role = Role::factory()->create();
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson("/api/roles/show/{$role->id}");
+            ->getJson("/api/v1/roles/show/{$role->id}");
 
         $response->assertStatus(200)
             ->assertJson([
@@ -85,7 +85,7 @@ class RoleApiTest extends TestCase
         $role = Role::factory()->create();
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->deleteJson("/api/roles/delete/{$role->id}");
+            ->deleteJson("/api/v1/roles/delete/{$role->id}");
 
         $response->assertStatus(200)
             ->assertJson([
@@ -106,7 +106,7 @@ class RoleApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/roles/create', [
+            ->postJson('/api/v1/roles/create', [
 
         ]);
 
@@ -125,7 +125,7 @@ class RoleApiTest extends TestCase
         $role = Role::factory()->create();
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->putJson("/api/roles/update/{$role->id}", [
+            ->putJson("/api/v1/roles/update/{$role->id}", [
             'name' => '',
         ]);
 
@@ -142,7 +142,7 @@ class RoleApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson('/api/roles/index', ['per_page' => 10]);
+            ->getJson('/api/v1/roles/index', ['per_page' => 10]);
 
         $response->assertStatus(200)
             ->assertJsonStructure([

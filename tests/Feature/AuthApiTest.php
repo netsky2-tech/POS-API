@@ -94,7 +94,7 @@ class AuthApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson('/api/auth/user');
+            ->getJson('/api/v1/auth/user');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -105,7 +105,7 @@ class AuthApiTest extends TestCase
     }
     public function test_access_without_token()
     {
-        $response = $this->getJson('/api/auth/user');
+        $response = $this->getJson('/api/v1/auth/user');
 
         $response->assertStatus(401)
                  ->assertJson(["message" => "Token not provided"]);
@@ -124,7 +124,7 @@ class AuthApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/auth/logout');
+            ->postJson('/api/v1/auth/logout');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -146,7 +146,7 @@ class AuthApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/auth/refresh');
+            ->postJson('/api/v1/auth/refresh');
 
         $response->assertStatus(200)
             ->assertJsonStructure([

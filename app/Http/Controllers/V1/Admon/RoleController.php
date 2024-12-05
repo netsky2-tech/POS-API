@@ -191,7 +191,7 @@ class RoleController extends Controller
      *     security={{"bearerAuth": {}}}
      * )
      */
-    public function show($id): JsonResponse
+    public function show($id): RoleResource
     {
         $role = $this->roleService->getRoleById($id);
 
