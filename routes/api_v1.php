@@ -35,11 +35,11 @@ Route::group([
 Route::group([
     'prefix' => 'v1/roles'
 ], function ($route){
-    Route::get('index',[RoleController::class, 'index']);
-    Route::post('create',[RoleController::class, 'store']);
-    Route::get('show/{id}',[RoleController::class, 'show']);
-    Route::put('update/{id}',[RoleController::class, 'update']);
-    Route::delete('delete/{id}', [RoleController::class, 'destroy']);
+    Route::get('index',[RoleController::class, 'index'])->name('v1.roles.index');
+    Route::post('create',[RoleController::class, 'store'])->name('v1.roles.store');
+    Route::get('show/{id}',[RoleController::class, 'show'])->name('v1.roles.show');
+    Route::put('update/{role}',[RoleController::class, 'update'])->name('v1.roles.update');
+    Route::delete('delete/{role}', [RoleController::class, 'destroy'])->name('v1.roles.delete');
 });
 
 #endregion Roles
