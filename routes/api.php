@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admon\MenuController;
 use App\Http\Controllers\Admon\PermissionController;
 use App\Http\Controllers\Admon\RoleController;
 use Illuminate\Http\Request;
@@ -50,3 +51,12 @@ Route::group([
 });
 
 #endregion Roles
+
+#region Menus
+Route::group([
+    'middleware' => 'jwt.auth',
+    'prefix' => 'menus'
+], function ($route) {
+    Route::get('get-all', [MenuController::class, 'getAll']);
+});
+#endregion Menus

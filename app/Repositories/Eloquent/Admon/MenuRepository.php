@@ -20,10 +20,20 @@ class MenuRepository implements MenuRepositoryInterface
 {
     protected Menu $model;
 
-    public function __construct(Menu $model){
+    public function __construct(Menu $model)
+    {
         $this->model = $model;
     }
 
+    /**
+     * Obtener todos los menús.
+     *
+     * @return Collection
+     */
+    public function getAll(): Collection
+    {
+        return $this->model->get();
+    }
 
     public function getByModuleId(int $moduleId): Collection
     {
