@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
 
 /**
@@ -162,6 +163,7 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request): RoleResource
     {
+        Log::info($request->validated());
         $role = $this->roleService->createRole($request->validated());
 
         return new RoleResource($role);

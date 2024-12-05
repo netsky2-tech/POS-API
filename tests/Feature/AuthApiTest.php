@@ -72,9 +72,9 @@ class AuthApiTest extends TestCase
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'company_id' => $company->id,
-            'branch_id' => $branch->id
+            'branch_id' => $branch->id,
+            'created_by' => 'admin'
         ]);
-
         $response->assertStatus(201)
             ->assertJson([
                 'message' => 'Usuario creado con éxito.',

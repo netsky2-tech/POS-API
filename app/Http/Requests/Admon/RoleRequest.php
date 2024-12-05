@@ -51,7 +51,7 @@ class RoleRequest extends FormRequest
             case 'POST':
                 $rules = [
                     'name' => 'required|string|max:255|unique:roles,name',
-                    'permissions' => 'array|exists:permissions,id',
+                    'created_by' => 'string'
                 ];
                 break;
 

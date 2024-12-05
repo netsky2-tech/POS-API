@@ -34,9 +34,9 @@ class RoleApiTest extends TestCase
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
             ->postJson('/api/roles/create', [
-            'name' => 'Admin',
+                'name' => 'Admin',
+                'created_by' => $user->name,
         ]);
-
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'data' => [

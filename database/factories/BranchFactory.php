@@ -19,7 +19,7 @@ class BranchFactory extends Factory
 
     protected $model = Branch::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
             'company_id' => Company::factory(),

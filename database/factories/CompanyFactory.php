@@ -6,7 +6,7 @@ use App\Models\Company;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Admon\Company>
+ * @extends Factory<Company>
  */
 class CompanyFactory extends Factory
 {
@@ -18,11 +18,13 @@ class CompanyFactory extends Factory
 
     protected $model = Company::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
             'name' => $this->faker->company,
             'address' => $this->faker->address,
+            'created_by' => $this->faker->name,
+            'modified_by' => $this->faker->name,
         ];
     }
 }
