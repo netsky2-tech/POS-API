@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Admon;
+namespace App\Http\Controllers\V1\Admon;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\V1\Controller;
 use App\Repositories\Interfaces\Admon\ActionRepositoryInterface;
 use App\Repositories\Interfaces\Admon\MenuRepositoryInterface;
 use App\Repositories\Interfaces\Admon\ModuleRepositoryInterface;
 use App\Repositories\Interfaces\Admon\PermissionRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 class PermissionController extends Controller
 {

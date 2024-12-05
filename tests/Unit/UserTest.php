@@ -2,13 +2,12 @@
 
 namespace Tests\Unit;
 
+use App\Http\Controllers\V1\UserController;
+use App\Models\User;
+use App\Repositories\Interfaces\UserRepositoryInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\MockObject\Exception;
 use Tests\TestCase;
-use App\Models\User;
-use App\Models\Admon\Role;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Http\Controllers\UserController;
-use App\Repositories\Interfaces\UserRepositoryInterface;
 
 class UserTest extends TestCase
 {

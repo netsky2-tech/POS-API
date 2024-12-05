@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Admon;
+namespace App\Http\Controllers\V1\Admon;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+
+use App\Http\Controllers\V1\Controller;
+use App\Models\Admon\Action;
+use App\Models\Admon\Permission;
 
 class MenuController extends Controller
 {

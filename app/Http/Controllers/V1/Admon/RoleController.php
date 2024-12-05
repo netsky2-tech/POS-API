@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Admon;
+namespace App\Http\Controllers\V1\Admon;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\V1\Controller;
 use App\Http\Requests\Admon\RoleRequest;
 use App\Http\Resources\Admon\RoleResource;
 use App\Services\Admon\RoleService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use OpenApi\Annotations as OA;
 
@@ -193,7 +191,7 @@ class RoleController extends Controller
      *     security={{"bearerAuth": {}}}
      * )
      */
-    public function show($id): RoleResource
+    public function show($id): JsonResponse
     {
         $role = $this->roleService->getRoleById($id);
 

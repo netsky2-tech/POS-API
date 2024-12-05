@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use Illuminate\Http\Request;
 use OpenApi\Annotations as OA;
 
 
