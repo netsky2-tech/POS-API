@@ -2,6 +2,7 @@
 
 namespace Controllers\V1;
 
+use App\Models\Admon\Role;
 use App\Models\Branch;
 use App\Models\Company;
 use App\Models\User;
@@ -60,6 +61,7 @@ class AuthApiTest extends TestCase
     {
         $company = Company::factory()->create();
         $branch = Branch::factory()->create(['company_id' => $company->id]);
+        $role = Role::factory()->create();
 
         $response = $this->postJson('/api/auth/register', [
             'name' => 'Juan Pérez',
@@ -69,6 +71,7 @@ class AuthApiTest extends TestCase
             'password_confirmation' => 'password123',
             'company_id' => $company->id,
             'branch_id' => $branch->id,
+            'role_id' => $role->id,
             'created_by' => 'admin'
         ]);
         $response->assertStatus(201)

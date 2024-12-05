@@ -3,7 +3,6 @@ namespace App\Services\Admon;
 
 use App\Models\Admon\Role;
 use App\Repositories\Interfaces\Admon\RoleRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class RoleService

@@ -21,15 +21,25 @@ class RoleApiTest extends TestCase
         Role::factory()->count(5)->create();
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson(route('v1.roles.index', ['par_page' => 2]));
+            ->getJson(route('v1.roles.index', ['per_page' => 2]));
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
                     '*' => ['id', 'name', 'created_at', 'updated_at'],
                 ],
-                'meta',
-                'links',
+                'meta' => [
+                    'current_page',
+                    'per_page',
+                    'total',
+                    'total_pages'
+                ],
+                'links' => [
+                    'first',
+                    'last',
+                    'prev',
+                    'next'
+                ],
             ]);
     }
 

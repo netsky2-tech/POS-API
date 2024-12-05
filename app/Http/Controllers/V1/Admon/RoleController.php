@@ -7,9 +7,8 @@ use App\Http\Requests\Admon\RoleRequest;
 use App\Http\Resources\Admon\RoleResource;
 use App\Models\Admon\Role;
 use App\Services\Admon\RoleService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use OpenApi\Annotations as OA;
 
 /**
@@ -128,12 +127,15 @@ class RoleController extends Controller
      *     security={{"bearerAuth": {}}}
      * )
      * @param Request $request
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \Illuminate\Pagination\LengthAwarePaginator
      */
-    public function index(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function index(Request $request): ResourceCollection
     {
         $filters = $request->only('search');
-        $roles = $this->roleService->getAllPaginated($filters, $request->get('per_page', 15));
+        $per_page = $request->get('per_page', 15);
+
+        $roles = $this->roleService->getAllPaginated($filters, $per_page);
+
         return RoleResource::collection($roles);
     }
 
