@@ -201,11 +201,11 @@ class RoleController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/roles/update/{id}",
+     *     path="/api/roles/update/{role}",
      *     summary="Actualizar un rol existente",
      *     tags={"Roles"},
      *     @OA\Parameter(
-     *         name="id",
+     *         name="role",
      *         in="path",
      *         description="ID del rol",
      *         required=true,
@@ -236,7 +236,7 @@ class RoleController extends Controller
 
     /**
      * @OA\Delete(
-     *     path="/api/roles/delete/{id}",
+     *     path="/api/roles/delete/{role}",
      *     summary="Eliminar un rol",
      *     tags={"Roles"},
      *     @OA\Parameter(
