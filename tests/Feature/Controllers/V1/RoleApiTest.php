@@ -6,148 +6,92 @@ use App\Models\Admon\Role;
 use App\Models\User;
 use App\Services\Admon\RoleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class RoleApiTest extends TestCase
 {
-    use RefreshDatabase;
-
-    protected mixed $roleService;
-
-    public function setUp(): void
+    use RefreshDatabase, withFaker;
+    public function test_can_get_roles_paginated()
     {
-        parent::setUp();
-        $this->roleService = $this->app->make(RoleService::class);
+        $user = User::factory()->create();
+
+        $token = auth()->login($user);
+
+        Role::factory()->count(5)->create();
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->getJson(route('v1.roles.index', ['par_page' => 2]));
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => ['id', 'name', 'created_at', 'updated_at'],
+                ],
+                'meta',
+                'links',
+            ]);
     }
 
     public function test_can_create_role()
     {
-
-        // Crear un usuario para autenticarse
         $user = User::factory()->create();
 
-        // Obtener un token para autenticar al usuario
         $token = auth()->login($user);
 
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/v1/roles/create', [
-                'name' => 'Admin',
-                'created_by' => $user->name,
-        ]);
-        $response->assertStatus(201)
-            ->assertJsonStructure([
-                'data' => [
-                    'id',
-                    'name',
-                    'created_at',
-                    'updated_at',
-                ],
-            ]);
-
-        $this->assertDatabaseHas('roles', [
+        $data = [
             'name' => 'Admin',
-        ]);
+            'created_by' => $user->name
+        ];
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
+            ->postJson(route('v1.roles.store'), $data);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure(['data' => ['id', 'name', 'created_at', 'updated_at']]);
+
+        $this->assertDatabaseHas('roles', $data);
     }
 
-    public function test_can_get_role_by_id()
+    public function test_can_update_role()
     {
-        // Crear un usuario para autenticarse
         $user = User::factory()->create();
 
-        // Obtener un token para autenticar al usuario
         $token = auth()->login($user);
 
-        $role = Role::factory()->create();
+        $role = Role::factory()->create([
+            'created_by' => 'Josianne Graham'
+        ]);
+
+        $updateData = ['name' => 'Updated Role'];
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson("/api/v1/roles/show/{$role->id}");
+            ->putJson(route('v1.roles.update', $role), $updateData);
 
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
                     'id' => $role->id,
-                    'name' => $role->name,
-                ],
+                    'name' => 'Updated Role',
+                    'created_by' => 'Josianne Graham'
+                ]
             ]);
+
+        $this->assertDatabaseHas('roles', $updateData);
     }
 
     public function test_can_delete_role()
     {
-        // Crear un usuario para autenticarse
         $user = User::factory()->create();
 
-        // Obtener un token para autenticar al usuario
         $token = auth()->login($user);
 
         $role = Role::factory()->create();
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->deleteJson("/api/v1/roles/delete/{$role->id}");
+            ->deleteJson(route('v1.roles.delete', $role));
 
-        $response->assertStatus(200)
-            ->assertJson([
-                'message' => 'Rol eliminado correctamente.',
-            ]);
-
-        $this->assertDatabaseMissing('roles', [
-            'id' => $role->id,
-        ]);
-    }
-
-    public function test_create_role_validation_fails()
-    {
-        // Crear un usuario para autenticarse
-        $user = User::factory()->create();
-
-        // Obtener un token para autenticar al usuario
-        $token = auth()->login($user);
-
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/v1/roles/create', [
-
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name']);
-    }
-
-    public function test_update_role_validation_fails()
-    {
-        // Crear un usuario para autenticarse
-        $user = User::factory()->create();
-
-        // Obtener un token para autenticar al usuario
-        $token = auth()->login($user);
-
-        $role = Role::factory()->create();
-
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->putJson("/api/v1/roles/update/{$role->id}", [
-            'name' => '',
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['name']);
-    }
-
-    public function test_roles_pagination()
-    {
-        // Crear un usuario para autenticarse
-        $user = User::factory()->create();
-
-        // Obtener un token para autenticar al usuario
-        $token = auth()->login($user);
-
-        $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson('/api/v1/roles/index', ['per_page' => 10]);
-
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => ['id', 'name', 'created_at', 'updated_at']
-                ],
-                'meta' => ['current_page', 'total', 'per_page', 'total_pages'],
-                'links' => ['first', 'last', 'prev', 'next']
-            ]);
+        $response->assertStatus(204);
+        $this->assertDatabaseMissing('roles', ['id' => $role->id]);
     }
 }

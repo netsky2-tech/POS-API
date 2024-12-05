@@ -15,9 +15,9 @@ class RoleService
         $this->roleRepository = $roleRepository;
     }
 
-    public function getAllPaginated($perPage = 15): LengthAwarePaginator
+    public function getAllPaginated(array $filters, int $perPage): LengthAwarePaginator
     {
-        return $this->roleRepository->getAllPaginated();
+        return $this->roleRepository->getAllPaginated($filters, $perPage);
     }
 
     public function getRoleById(int $id): ?Role
@@ -30,26 +30,13 @@ class RoleService
         return $this->roleRepository->createRole($data);
     }
 
-    public function updateRole(int $id, array $data): ?Role
+    public function updateRole(Role $role, array $data): Role
     {
-        $role = $this->roleRepository->findRoleById($id);
-
-        if ($role) {
-            return $this->roleRepository->updateRole($role, $data);
-        }
-
-        return null;
+        return $this->roleRepository->updateRole($role, $data);
     }
 
-    public function deleteRole(int $id): ?bool
+    public function deleteRole(Role $role): void
     {
-        $role = $this->roleRepository->findRoleById($id);
-
-        if ($role) {
-            $this->roleRepository->deleteRole($role);
-            return true;
-        }
-
-        return false;
+        $this->roleRepository->deleteRole($role);
     }
 }

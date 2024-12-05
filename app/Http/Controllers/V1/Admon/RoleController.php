@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Admon;
 use App\Http\Controllers\V1\Controller;
 use App\Http\Requests\Admon\RoleRequest;
 use App\Http\Resources\Admon\RoleResource;
+use App\Models\Admon\Role;
 use App\Services\Admon\RoleService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -127,14 +128,12 @@ class RoleController extends Controller
      *     security={{"bearerAuth": {}}}
      * )
      * @param Request $request
-     * @return array
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Request $request): array
+    public function index(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $perPage = $request->get('per_page', 15);
-
-        $roles = $this->roleService->getAllPaginated($perPage);
-
+        $filters = $request->only('search');
+        $roles = $this->roleService->getAllPaginated($filters, $request->get('per_page', 15));
         return RoleResource::collection($roles);
     }
 
@@ -161,9 +160,7 @@ class RoleController extends Controller
      */
     public function store(RoleRequest $request): RoleResource
     {
-        Log::info($request->validated());
         $role = $this->roleService->createRole($request->validated());
-
         return new RoleResource($role);
     }
 
@@ -230,15 +227,11 @@ class RoleController extends Controller
      *     security={{"bearerAuth": {}}}
      * )
      */
-    public function update(RoleRequest $request, $id): RoleResource
+    public function update(RoleRequest $request, Role $role): RoleResource
     {
-        $role = $this->roleService->updateRole($id, $request->validated());
+        $role = $this->roleService->updateRole($role, $request->validated());
 
-        if ($role) {
-            return new RoleResource($role);
-        }
-
-        return response()->json(['message' => 'No se pudo encontrar el rol para actualizar.'], 404);
+        return new RoleResource($role);
     }
 
     /**
@@ -267,12 +260,9 @@ class RoleController extends Controller
      *     security={{"bearerAuth": {}}}
      * )
      */
-    public function destroy($id): JsonResponse
+    public function destroy(Role $role): \Illuminate\Http\Response
     {
-        if ($this->roleService->deleteRole($id)) {
-            return response()->json(['message' => 'Rol eliminado correctamente.']);
-        }
-
-        return response()->json(['message' => 'No se pudo eliminar el rol seleccionado.'], 404);
+        $this->roleService->deleteRole($role);
+        return response()->noContent();
     }
 }

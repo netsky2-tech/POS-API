@@ -3,6 +3,7 @@ namespace App\Services\Admon;
 
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -22,19 +23,19 @@ class AuthService
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function login(array $credentials, $ip)
     {
         $attempts = Cache::get('login_attempts_' . $ip, 0);
 
         if ($attempts >= 5) {
-            throw new \Exception('Demasiados intentos. Inténtalo de nuevo en 10 minutos.');
+            throw new Exception('Demasiados intentos. Inténtalo de nuevo en 10 minutos.');
         }
 
         if (!$token = JWTAuth::attempt($credentials)) {
             Cache::increment('login_attempts_' . $ip);
-            throw new \Exception('Credenciales incorrectas');
+            throw new Exception('Credenciales incorrectas');
         }
 
         Cache::forget('login_attempts_' . $ip);

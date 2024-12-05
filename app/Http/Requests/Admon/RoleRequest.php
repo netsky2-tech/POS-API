@@ -57,14 +57,13 @@ class RoleRequest extends FormRequest
 
             case 'PUT':
                 $rules = [
-                    'id' => 'required|integer|min:1',
                     'name' => 'required|string|unique:roles,name',
                 ];
                 break;
 
             case 'PATCH':
                 $rules = [
-                    'name' => 'required|string|max:255|unique:roles,name,' . $this->route('role'),
+                    'name' => 'required|string|max:255|unique:roles,name,' . $this->route('v1.roles.update'),
                     'permissions' => 'array|exists:permissions,id',
                 ];
                 break;
