@@ -86,3 +86,15 @@ Route::group([
 });
 #endregion Currency
 
+##region ExchangeRate
+Route::group([
+    'prefix' => 'v1/exchanges-rates'
+], function ($route){
+    Route::get('index', [\App\Http\Controllers\ExchangeRateController::class, 'index'])->name('v1.exchanges.index');
+    Route::post('create', [\App\Http\Controllers\ExchangeRateController::class, 'store'])->name('v1.exchanges.store');
+    Route::get('show/{id}', [\App\Http\Controllers\ExchangeRateController::class, 'show'])->name('v1.exchanges.show');
+    Route::put('update', [\App\Http\Controllers\ExchangeRateController::class, 'update'])->name('v1.exchanges.update');
+    Route::delete('delete', [\App\Http\Controllers\ExchangeRateController::class, 'update'])->name('v1.exchanges.update');
+});
+#endregion ExchangeRate
+

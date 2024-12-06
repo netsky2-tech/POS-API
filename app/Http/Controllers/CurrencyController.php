@@ -76,13 +76,13 @@ class CurrencyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CurrencyRequest $request): \Illuminate\Http\JsonResponse
+    public function store(CurrencyRequest $request): CurrencyResource
     {
         $data = $request->validated();
 
         $currency = $this->service->createCurency($data);
 
-        return response()->json($currency, 201);
+        return new CurrencyResource($currency);
     }
 
     /**

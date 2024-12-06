@@ -8,9 +8,9 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(
- *     schema="CurrencyRequest",
+ *     schema="ExchangeRateRequest",
  *     type="object",
- *     title="Currency Request",
+ *     title="Exchange Request",
  *     required={"name"},
  *     @OA\Property(
  *         property="name",
@@ -20,7 +20,7 @@ use OpenApi\Annotations as OA;
  * )
  */
 
-class CurrencyRequest extends FormRequest
+class ExchangeRateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -50,9 +50,10 @@ class CurrencyRequest extends FormRequest
 
             case 'POST':
                 $rules = [
-                    'code' => 'required|string|max:3|unique:currency,code',
-                    'name' => 'required|string|max:255|unique:currency.name',
-                    'symbol' => 'nullable|string|max:10|unique:currency.symbol'
+                    'base_currency_id' => 'required|integer|min:1|unique:currency,base_currency_id',
+                    'target_currency_id' => 'required|integer|min:1|unique:currency,target_currency_id',
+                    'exchange_rate' => 'required|decimal|min:0',
+                    'valid_from' => 'required|date|max:10',
                 ];
                 break;
 
@@ -78,9 +79,10 @@ class CurrencyRequest extends FormRequest
         return [
             'id.required' => 'El ID es obligatorio.',
             'data.required' => 'Digite los campos requeridos para crear una nueva moneda.',
-            'code.required' => 'El codigo de la moneda es obligatorio.',
-            'name.required' => 'El nombre de la moneda es obligatorio.',
-            'symbol.required' => 'El simbolo de la moneda es obligatorio.',
+            'base_currency_id.required' => 'La moneda base es requerida.',
+            'target_currency_id.required' => 'La moneda destino es requerida..',
+            'exchange_rate.required' => 'El tipo de cambio es requerido.',
+            'valid_from.required' => 'La fecha es requerida.',
         ];
     }
 }
