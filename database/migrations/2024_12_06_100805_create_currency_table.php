@@ -16,7 +16,7 @@ return new class extends Migration
             $table->char('code',3); // Código de la moneda (ISO 4217).
             $table->string('name', 255);
             $table->string('symbol', 10)->nullable();
-            $table->integer('state');
+            $table->integer('status');
             $table->string('created_by')->nullable();
             $table->string('modified_by')->nullable();
             $table->timestamps();

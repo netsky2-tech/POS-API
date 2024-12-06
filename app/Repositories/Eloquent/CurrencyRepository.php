@@ -1,51 +1,26 @@
 <?php
 
-namespace App\Repositories\Eloquent\Admon;
+namespace App\Repositories\Eloquent;
 
-use App\Models\Admon\Role;
-use App\Models\User;
-use App\Repositories\Interfaces\Admon\RoleRepositoryInterface;
-use App\Repositories\Interfaces\UserRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Currency;
+use App\Repositories\Interfaces\BaseRepositoryInterface;
 
-class RoleRepository implements RoleRepositoryInterface
+class CurrencyRepository extends BaseRepository implements BaseRepositoryInterface
 {
-    protected Role $model;
-
-    public function __construct(Role $role)
+    public function __construct(Currency $model)
     {
-        $this->model = $role;
+        parent::__construct($model);
     }
 
-    public function getAllPaginated(array $filters = [], $perPage = 15): LengthAwarePaginator
+    public function getAll($perPage = 15, $filters = []): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         $query = $this->model->query();
 
         if(isset($filters['search'])){
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+            $query->where('code', 'like', '%' . $filters['search'] . '%')
+                ->orWhere('name', 'like', '%' . $filters['search'] . '%')
+                ->orWhere('symbol', 'like', '%' . $filters['search'] . '%');
         }
-        return $query->paginate($perPage);
-    }
-
-    public function findRoleById($id): ?Role
-    {
-        return $this->model->find($id);
-    }
-
-    public function createRole(array $data): Role
-    {
-        return $this->model->create($data);
-    }
-
-    public function updateRole(Role $role, array $data): Role
-    {
-        $role->update($data);
-        return $role;
-    }
-
-    public function deleteRole(Role $role): void
-    {
-        $role->delete();
+        return $query->paginate($query);
     }
 }

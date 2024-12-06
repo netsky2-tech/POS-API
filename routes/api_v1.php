@@ -74,3 +74,15 @@ Route::group([
 
 #endregion Municipality
 
+#region Currency
+Route::group([
+    'prefix' => 'v1/currencies'
+], function ($route){
+    Route::get('index', [\App\Http\Controllers\CurrencyController::class, 'index'])->name('v1.currencies.index');
+    Route::post('create', [\App\Http\Controllers\CurrencyController::class, 'store'])->name('v1.currencies.store');
+    Route::get('show/{id}', [\App\Http\Controllers\CurrencyController::class, 'show'])->name('v1.currencies.show');
+    Route::put('update', [\App\Http\Controllers\CurrencyController::class, 'update'])->name('v1.currencies.update');
+    Route::delete('delete', [\App\Http\Controllers\CurrencyController::class, 'update'])->name('v1.currencies.update');
+});
+#endregion Currency
+

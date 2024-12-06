@@ -2,60 +2,51 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\Admon\Role;
 use App\Models\Currency;
-use App\Repositories\Interfaces\Admon\RoleRepositoryInterface;
-use App\Repositories\Interfaces\CurrencyRepositoryInterface;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Repositories\Interfaces\BaseRepositoryInterface;
+use Illuminate\Database\Eloquent\Model;
 
-class CurrencyRepository implements CurrencyRepositoryInterface
+class BaseRepository implements BaseRepositoryInterface
 {
-    protected Currency $model;
+    protected Model $model;
 
-    public function __construct(Currency $role)
+    public function __construct(Model $model)
     {
-        $this->model = $role;
+        $this->model = $model;
     }
 
-    public function getAll(array $filters = [], $perPage = 15): LengthAwarePaginator
+    public function getAll($perPage = 15, $filters = [])
     {
         $query = $this->model->query();
-
-        if (!empty($filters['base_currency_id'])) {
-            $query->where('base_currency_id', $filters['base_currency_id']);
-        }
-
-        if (!empty($filters['target_currency_id'])) {
-            $query->where('target_currency_id', $filters['target_currency_id']);
-        }
-
-        if (!empty($filters['date_range'])) {
-            $query->whereBetween('valid_from', $filters['date_range']);
-        }
-
-        $query->orderBy('valid_from', 'desc');
 
         return $query->paginate($perPage);
     }
 
-    public function findRoleById($id): ?Role
-    {
-        return $this->model->find($id);
-    }
-
-    public function createRole(array $data): Role
+    public function store(array $data)
     {
         return $this->model->create($data);
     }
 
-    public function updateRole(Role $role, array $data): Role
+    public function findById(int $id)
     {
-        $role->update($data);
-        return $role;
+        return $this->model->findOrFail($id);
     }
 
-    public function deleteRole(Role $role): void
+    public function update(int $id, array $data)
     {
-        $role->delete();
+        $record = $this->findById($id);
+        $record->update($data);
+
+        return $record;
+    }
+
+    public function delete(int $id)
+    {
+        $record = $this->findById($id);
+        if(!$record){
+            return false;
+        }
+        $record->status = 0;
+        return $record->save();
     }
 }

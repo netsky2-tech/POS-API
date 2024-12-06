@@ -2,15 +2,11 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\User;
-
-interface UserRepositoryInterface
+interface BaseRepositoryInterface
 {
-    public function getAllUsers();
-    public function findUserById($id);
-    public function createUser(array $data) : User;
-    public function updateUser($id, array $data);
-    public function deleteUser($id);
-
-    public function findByEmail(string $email) : ?User;
+    public function getAll($perPage = 15, $filters = []); // Index con paginación
+    public function store(array $data); // Crear nuevo registro
+    public function findById(int $id); // Obtener un registro por ID
+    public function update(int $id, array $data); // Actualizar registro
+    public function delete(int $id); // Eliminar registro
 }

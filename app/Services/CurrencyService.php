@@ -1,41 +1,41 @@
 <?php
-namespace App\Services\Admon;
+namespace App\Services;
 
 use App\Models\Admon\Role;
-use App\Repositories\Interfaces\Admon\RoleRepositoryInterface;
+use App\Repositories\Interfaces\CurrencyRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class RoleService
+class CurrencyService
 {
-    protected RoleRepositoryInterface $roleRepository;
+    protected CurrencyRepositoryInterface $currencyRepository;
 
-    public function __construct(RoleRepositoryInterface $roleRepository)
+    public function __construct(CurrencyRepositoryInterface $currencyRepository)
     {
-        $this->roleRepository = $roleRepository;
+        $this->currencyRepository = $currencyRepository;
     }
 
-    public function getAllPaginated(array $filters, int $perPage): LengthAwarePaginator
+    public function getAllPaginated($filters = [], $perPage = 15): LengthAwarePaginator
     {
-        return $this->roleRepository->getAllPaginated($filters, $perPage);
+        return $this->currencyRepository->getAll($filters, $perPage);
     }
 
-    public function getRoleById(int $id): ?Role
+    public function getCurrencyById(int $id)
     {
-        return $this->roleRepository->findRoleById($id) ?? null;
+        return $this->currencyRepository->findById($id) ?? null;
     }
 
-    public function createRole(array $data): Role
+    public function createCurency(array $data)
     {
-        return $this->roleRepository->createRole($data);
+        return $this->currencyRepository->store($data);
     }
 
-    public function updateRole(Role $role, array $data): Role
+    public function updateCurrency(int $id, array $data)
     {
-        return $this->roleRepository->updateRole($role, $data);
+        return $this->currencyRepository->update($id, $data);
     }
 
-    public function deleteRole(Role $role): void
+    public function deleteCurrency(int $id)
     {
-        $this->roleRepository->deleteRole($role);
+        return $this->currencyRepository->delete($id);
     }
 }
