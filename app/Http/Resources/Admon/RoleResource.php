@@ -3,7 +3,9 @@
 namespace App\Http\Resources\Admon;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class RoleResource extends JsonResource
@@ -19,16 +21,19 @@ class RoleResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'permissions' => PermissionResource::collection($this->whenLoaded('permissions')),
+            'created_by' => $this->created_by,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
     }
 
-    public static function collection($resource): \Illuminate\Http\Resources\Json\AnonymousResourceCollection|array
+    public static function collection($resource): AnonymousResourceCollection
     {
         if ($resource instanceof LengthAwarePaginator) {
-            return [
-                'data' => parent::collection($resource->items()),
+            return (new AnonymousResourceCollection(
+                $resource->items(),
+                self::class
+            ))->additional([
                 'meta' => [
                     'current_page' => $resource->currentPage(),
                     'per_page' => $resource->perPage(),
@@ -41,9 +46,10 @@ class RoleResource extends JsonResource
                     'prev' => $resource->previousPageUrl(),
                     'next' => $resource->nextPageUrl(),
                 ]
-            ];
+            ]);
         }
 
+        // Devolvemos una colección normal en caso contrario
         return parent::collection($resource);
     }
 }

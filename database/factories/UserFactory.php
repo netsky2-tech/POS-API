@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Admon\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -30,16 +31,18 @@ class UserFactory extends Factory
 
         $company = Company::factory()->create();
         $branch = Branch::factory()->create(['company_id' => $company->id]);
+        $role = Role::factory()->create();
 
         return [
+            'company_id' => $company->id,
+            'branch_id' => $branch->id,
+            'role_id' => $role->id,
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
             'full_name' => $this->faker->name,
             'email_verified_at' => now(),
             'password' => bcrypt('password'),
             'remember_token' => Str::random(10),
-            'company_id' => $company->id,
-            'branch_id' => $branch->id,
             'created_by' => $this->faker->name,
         ];
     }

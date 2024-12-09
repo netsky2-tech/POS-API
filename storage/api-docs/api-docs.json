@@ -20,7 +20,7 @@
                 ],
                 "summary": "Obtiene los permisos por módulo",
                 "description": "Devuelve los módulos, menús y acciones a los que un rol tiene acceso.",
-                "operationId": "2ff75c125a5f5858ba02ef5f730d97a4",
+                "operationId": "223b8d6ff6ed3549c0b31eabff69036e",
                 "parameters": [
                     {
                         "name": "roleId",
@@ -119,7 +119,7 @@
                     "Roles"
                 ],
                 "summary": "Obtener todos los roles",
-                "operationId": "1fe092a9f9011b4193d58e8f1f874958",
+                "operationId": "92e30fe1eb2346d6e8e4b9ac21208359",
                 "parameters": [
                     {
                         "name": "per_page",
@@ -202,7 +202,7 @@
                     "Roles"
                 ],
                 "summary": "Crear un nuevo rol",
-                "operationId": "2dd1d670f2aa7d2c1614ba914315f328",
+                "operationId": "6106e5a4a614ac06977b5d4de4689052",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -241,7 +241,7 @@
                     "Roles"
                 ],
                 "summary": "Obtener un rol por ID",
-                "operationId": "c03b25002aff28abd01cbd44d32d2057",
+                "operationId": "77deefcb47aad4da253b2d61349865e8",
                 "parameters": [
                     {
                         "name": "id",
@@ -275,16 +275,16 @@
                 ]
             }
         },
-        "/api/roles/update/{id}": {
+        "/api/roles/update/{role}": {
             "put": {
                 "tags": [
                     "Roles"
                 ],
                 "summary": "Actualizar un rol existente",
-                "operationId": "d9eb3d1885e04f035d75584e92925b2d",
+                "operationId": "bb668def592b2dabfff17b0f17fd065c",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "role",
                         "in": "path",
                         "description": "ID del rol",
                         "required": true,
@@ -325,13 +325,13 @@
                 ]
             }
         },
-        "/api/roles/delete/{id}": {
+        "/api/roles/delete/{role}": {
             "delete": {
                 "tags": [
                     "Roles"
                 ],
                 "summary": "Eliminar un rol",
-                "operationId": "4860b804ed08d9f483b035da32f4fb12",
+                "operationId": "90f8e8ea85c4659a48df9fafd5184d50",
                 "parameters": [
                     {
                         "name": "id",
@@ -724,7 +724,7 @@
                     "Usuarios"
                 ],
                 "summary": "Obtener lista de usuarios",
-                "operationId": "1ad1cf4ffbfc84b02284335bdd828008",
+                "operationId": "e44a1c2770cbb81b8ea1ed6b38731d7c",
                 "responses": {
                     "200": {
                         "description": "Lista de usuarios obtenida exitosamente",
@@ -746,7 +746,7 @@
                     "Usuarios"
                 ],
                 "summary": "Crear un nuevo usuario",
-                "operationId": "592819a0265360b2014512d6dbfaf0e7",
+                "operationId": "fd6c5089828e64caaeaa7e41a83609f3",
                 "requestBody": {
                     "required": true,
                     "content": {

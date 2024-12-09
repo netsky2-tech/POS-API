@@ -1,11 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admon\MenuController;
-use App\Http\Controllers\Admon\PermissionController;
-use App\Http\Controllers\Admon\RoleController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\V1\Admon\PermissionController;
+use App\Http\Controllers\V1\AuthController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,30 +22,11 @@ Route::post('auth/register', [AuthController::class, 'register']);
 Route::get('permission/{roleId}', [PermissionController::class, 'getModulePermissions'])->middleware('auth:api');
 # end publicRoutes
 
-#region AuthenticationRoutes
-
 Route::group([
     'middleware' => 'jwt.auth',
-    'prefix' => 'auth'
-], function ($router) {
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('user', [AuthController::class, 'user']);
-    Route::post('refresh', [AuthController::class, 'refresh']);
-});
-
-#endregion AuthenticationRoutes
-
-#region Roles
-
-Route::group([
-    'middleware' => 'jwt.auth',
-    'prefix' => 'roles'
-], function ($route) {
-    Route::get('index', [RoleController::class, 'index']);
-    Route::post('create', [RoleController::class, 'store']);
-    Route::get('show/{id}', [RoleController::class, 'show']);
-    Route::put('update/{id}', [RoleController::class, 'update']);
-    Route::delete('delete/{id}', [RoleController::class, 'destroy']);
+], function () {
+    require __DIR__ . '/api_v1.php';
+    require __DIR__ . '/api_v2.php';
 });
 
 #endregion Roles

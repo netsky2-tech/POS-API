@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('branch_id');
+            $table->unsignedBigInteger('role_id');
             $table->string('name')->unique();
             $table->string('full_name')->unique();
             $table->string('email')->unique();
@@ -28,6 +29,7 @@ return new class extends Migration
 
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
         });
     }
 

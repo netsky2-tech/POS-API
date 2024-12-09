@@ -1,17 +1,14 @@
 <?php
 
-namespace Tests\Feature;
+namespace Controllers\V1;
 
+use App\Models\Admon\Role;
 use App\Models\Branch;
 use App\Models\Company;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Log;
-use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Tests\Helpers\HandlesAuthCookies;
+use Tests\TestCase;
 
 class AuthApiTest extends TestCase
 {
@@ -64,6 +61,7 @@ class AuthApiTest extends TestCase
     {
         $company = Company::factory()->create();
         $branch = Branch::factory()->create(['company_id' => $company->id]);
+        $role = Role::factory()->create();
 
         $response = $this->postJson('/api/auth/register', [
             'name' => 'Juan Pérez',
@@ -73,6 +71,7 @@ class AuthApiTest extends TestCase
             'password_confirmation' => 'password123',
             'company_id' => $company->id,
             'branch_id' => $branch->id,
+            'role_id' => $role->id,
             'created_by' => 'admin'
         ]);
         $response->assertStatus(201)
@@ -94,7 +93,7 @@ class AuthApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->getJson('/api/auth/user');
+            ->getJson('/api/v1/auth/user');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -105,7 +104,7 @@ class AuthApiTest extends TestCase
     }
     public function test_access_without_token()
     {
-        $response = $this->getJson('/api/auth/user');
+        $response = $this->getJson('/api/v1/auth/user');
 
         $response->assertStatus(401)
                  ->assertJson(["message" => "Token not provided"]);
@@ -124,7 +123,7 @@ class AuthApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/auth/logout');
+            ->postJson('/api/v1/auth/logout');
 
         $response->assertStatus(200)
             ->assertJson([
@@ -146,7 +145,7 @@ class AuthApiTest extends TestCase
         $token = auth()->login($user);
 
         $response = $this->withHeader('Authorization', 'Bearer ' . $token)
-            ->postJson('/api/auth/refresh');
+            ->postJson('/api/v1/auth/refresh');
 
         $response->assertStatus(200)
             ->assertJsonStructure([

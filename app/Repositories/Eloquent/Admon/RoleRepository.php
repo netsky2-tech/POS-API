@@ -18,9 +18,14 @@ class RoleRepository implements RoleRepositoryInterface
         $this->model = $role;
     }
 
-    public function getAllPaginated($perPage = 15): LengthAwarePaginator
+    public function getAllPaginated(array $filters = [], $perPage = 15): LengthAwarePaginator
     {
-        return $this->model->paginate($perPage);
+        $query = $this->model->query();
+
+        if(isset($filters['search'])){
+            $query->where('name', 'like', '%' . $filters['search'] . '%');
+        }
+        return $query->paginate($perPage);
     }
 
     public function findRoleById($id): ?Role

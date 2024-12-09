@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface RoleRepositoryInterface
 {
-    public function getAllPaginated($perPage = 15): LengthAwarePaginator;
+    public function getAllPaginated(array $filters = [], $perPage = 15): LengthAwarePaginator;
     public function findRoleById($id): ?Role;
     public function createRole(array $data): Role;
     public function updateRole(Role $role, array $data): Role;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admon;
+namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,9 +8,9 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(
- *     schema="RoleRequest",
+ *     schema="ExchangeRateRequest",
  *     type="object",
- *     title="Role Request",
+ *     title="Exchange Request",
  *     required={"name"},
  *     @OA\Property(
  *         property="name",
@@ -20,7 +20,7 @@ use OpenApi\Annotations as OA;
  * )
  */
 
-class RoleRequest extends FormRequest
+class ExchangeRateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -50,21 +50,23 @@ class RoleRequest extends FormRequest
 
             case 'POST':
                 $rules = [
-                    'name' => 'required|string|max:255|unique:roles,name',
-                    'created_by' => 'string'
+                    'base_currency_id' => 'required|integer|min:1|unique:currency,base_currency_id',
+                    'target_currency_id' => 'required|integer|min:1|unique:currency,target_currency_id',
+                    'exchange_rate' => 'required|decimal|min:0',
+                    'valid_from' => 'required|date|max:10',
                 ];
                 break;
 
             case 'PUT':
                 $rules = [
-                    'name' => 'required|string|unique:roles,name',
+                    'id' => 'required|integer|min:1',
+                    'data' => 'required|array'
                 ];
                 break;
 
-            case 'PATCH':
+            case 'DELETE':
                 $rules = [
-                    'name' => 'required|string|max:255|unique:roles,name,' . $this->route('v1.roles.update'),
-                    'permissions' => 'array|exists:permissions,id',
+                    'id' => 'required|integer|min:1',
                 ];
                 break;
         }
@@ -75,7 +77,12 @@ class RoleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'per_page.max' => 'El número máximo de elementos por página es 100.',
+            'id.required' => 'El ID es obligatorio.',
+            'data.required' => 'Digite los campos requeridos para crear una nueva moneda.',
+            'base_currency_id.required' => 'La moneda base es requerida.',
+            'target_currency_id.required' => 'La moneda destino es requerida..',
+            'exchange_rate.required' => 'El tipo de cambio es requerido.',
+            'valid_from.required' => 'La fecha es requerida.',
         ];
     }
 }

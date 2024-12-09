@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admon;
+namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -8,9 +8,9 @@ use OpenApi\Annotations as OA;
 
 /**
  * @OA\Schema(
- *     schema="RoleRequest",
+ *     schema="CurrencyRequest",
  *     type="object",
- *     title="Role Request",
+ *     title="Currency Request",
  *     required={"name"},
  *     @OA\Property(
  *         property="name",
@@ -20,7 +20,7 @@ use OpenApi\Annotations as OA;
  * )
  */
 
-class RoleRequest extends FormRequest
+class CurrencyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -50,21 +50,22 @@ class RoleRequest extends FormRequest
 
             case 'POST':
                 $rules = [
-                    'name' => 'required|string|max:255|unique:roles,name',
-                    'created_by' => 'string'
+                    'code' => 'required|string|max:3|unique:currency,code',
+                    'name' => 'required|string|max:255|unique:currency.name',
+                    'symbol' => 'nullable|string|max:10|unique:currency.symbol'
                 ];
                 break;
 
             case 'PUT':
                 $rules = [
-                    'name' => 'required|string|unique:roles,name',
+                    'id' => 'required|integer|min:1',
+                    'data' => 'required|array'
                 ];
                 break;
 
-            case 'PATCH':
+            case 'DELETE':
                 $rules = [
-                    'name' => 'required|string|max:255|unique:roles,name,' . $this->route('v1.roles.update'),
-                    'permissions' => 'array|exists:permissions,id',
+                    'id' => 'required|integer|min:1',
                 ];
                 break;
         }
@@ -75,7 +76,11 @@ class RoleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'per_page.max' => 'El número máximo de elementos por página es 100.',
+            'id.required' => 'El ID es obligatorio.',
+            'data.required' => 'Digite los campos requeridos para crear una nueva moneda.',
+            'code.required' => 'El codigo de la moneda es obligatorio.',
+            'name.required' => 'El nombre de la moneda es obligatorio.',
+            'symbol.required' => 'El simbolo de la moneda es obligatorio.',
         ];
     }
 }
