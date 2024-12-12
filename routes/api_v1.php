@@ -47,8 +47,7 @@ Route::group([
 
 #region Menus
 Route::group([
-    'middleware' => 'jwt.auth',
-    'prefix' => 'menus'
+    'prefix' => 'v1/menus'
 ], function ($route) {
     Route::get('get-all', [MenuController::class, 'getAll']);
 });
